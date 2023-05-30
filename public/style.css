@@ -1,0 +1,30 @@
+* {
+	position: relative;
+}
+
+body {
+	display: flex;
+	justify-content: left;
+	align-items: center;
+
+}
+
+canvas {
+	object-fit: contain;
+	width: 100% !important;
+	height: 100% !important;
+	image-rendering: -moz-crisp-edges;
+	image-rendering: -webkit-crisp-edges;
+	image-rendering: pixelated;
+	image-rendering: crisp-edges;
+}
+
+#wavy-sketch {
+	width: 50%;
+	height: 50%;
+  }
+
+#duration[type="text"] {
+	width: 30px;
+	margin: 10px;
+}
