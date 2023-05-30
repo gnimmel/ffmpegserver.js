@@ -1,19 +1,26 @@
-/*var url = window.location.href;
+const REQUIRES_GL = false;
+
+var urlParams = {};
+var url = window.location.href;
 
 console.log("Current URL: " + url);
 
 var urlObj = new URL(url);
 var pams = new URLSearchParams(urlObj.search);
 
-// What words were passed?
+// What params have we been passed?
 for (let pair of pams.entries()) {
   console.log(pair[0] + ', ' + pair[1]);
+  urlParams[pair[0]] = pair[1];
 }
-*/
+
 
 const sketch = (p) => {
-  let canvas;
-  let ctx;
+  
+  let scl = 0.5;
+
+  //let canvas;
+  //let ctx;
   let field;
   let w, h;
   let size;
@@ -25,8 +32,8 @@ const sketch = (p) => {
   let fps = 30;
 
   let intPixDensity = 1;
-  let displayWidth = 580;
-  let displayHeight = 580;
+  let canvasWidth = (urlParams.hasOwnProperty('canvasWidth')) ? parseInt(urlParams['canvasWidth']) * scl : 1080 * scl;
+  let canvasHeight = (urlParams.hasOwnProperty('canvasHeight')) ? parseInt(urlParams['canvasHeight']) * scl : 1080 * scl;
 
   // GUI
   let gui;
@@ -69,7 +76,7 @@ const sketch = (p) => {
   p.setup = () => {
     p.frameRate(fps);
     p.pixelDensity(intPixDensity);
-    p.createCanvas(displayWidth, displayHeight, p.WEBGL);
+    p.createCanvas(canvasWidth, canvasHeight, (REQUIRES_GL) ? p.WEBGL : p.P2D);
     p.background(0);
     
     //ctx = p.drawingContext;
@@ -82,12 +89,14 @@ const sketch = (p) => {
     //ctx = canvas.getContext("2d");
     reset();
     
-    //window.addEventListener("resize", reset);  
+    let elem = document.createElement('p');
+    elem.textContent = 'Output Resolution: ' + canvasWidth + 'x' + canvasHeight;
+    document.getElementById('resolution').appendChild(elem);
   
 
     //gui = p.createGui(p);
     //gui.addObject(params);
-    //gui.setPosition((displayWidth + 50) * .5, 25);
+    //gui.setPosition((canvasWidth + 50) * .5, 25);
   }
 
   p.draw = () => {
@@ -152,8 +161,8 @@ const sketch = (p) => {
   }
   
   function reset() {
-    w = displayWidth;// = window.innerWidth;
-    h = displayHeight;// = window.innerHeight;
+    w = canvasWidth;
+    h = canvasHeight;
     //p.noiseSeed(Math.random());
     columns = Math.floor(w / size) + 1;
     rows = Math.floor(h / size) + 1;
@@ -167,7 +176,11 @@ const sketch = (p) => {
         let angle = field[x][y][0];
         let length = field[x][y][1];
         p.push();
-        p.translate(x*size-displayWidth*0.5, y*size-displayWidth*0.5);
+        if (REQUIRES_GL)
+          p.translate(x * size - (canvasWidth * scl), y * size - (canvasHeight * scl));
+        else
+          p.translate(x * size, y * size);
+
         p.rotate(angle);
         
         p.line(0, 0, 0, size * length);

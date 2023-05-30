@@ -6,7 +6,6 @@ body {
 	display: flex;
 	justify-content: left;
 	align-items: center;
-
 }
 
 canvas {
@@ -19,9 +18,9 @@ canvas {
 	image-rendering: crisp-edges;
 }
 
-#wavy-sketch {
-	width: 50%;
-	height: 50%;
+#flow-sketch {
+	width: 100%;
+	height: 100%;
   }
 
 #duration[type="text"] {
