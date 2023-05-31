@@ -14,8 +14,10 @@
         <br/><br/>
         <div id="resolution"></div>
         Seconds:<input type="text" id="duration" value="5">
-        <button type="button" onclick="startCapture()">Start Capture</button><br/><br/>
-        <div id="progress"></div>
+        <button type="button" id="startButton">Start Capture</button><br/><br/>
+        <div id="timer">0:00:00</div><br/><br/>
+        <div id="progress"></div><br/><br/>
+        
     </div>
   </body>
 
@@ -24,26 +26,7 @@
   <script src="https://uhhm-ffmpegserver.azurewebsites.net/ffmpegserver/CCapture.js"></script>
   <script src="https://uhhm-ffmpegserver.azurewebsites.net/ffmpegserver/ffmpegserver.js"></script>-->
   
-  <script>
-    let local = "http://localhost:8080/";
-    let azure = "https://uhhm-ffmpegserver.azurewebsites.net/";
-    let cc = "ffmpegserver/CCapture.js";
-    let ff = "ffmpegserver/ffmpegserver.js";
-
-    let s1 = document.createElement('script');
-    let s2 = document.createElement('script');
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        s1.src = local + cc;
-        s2.src = local + ff;
-    } else {
-      s1.src = azure + cc;
-      s2.src = azure + ff;
-    }
-
-    document.body.appendChild(s1);
-    document.body.appendChild(s2);
-
-    </script>
-    <script src="uhhm-p5-flow.js"></script>
+  <script> src="utils/hostcheck.js" </script>
+  <script type="module" src="uhhm-p5-flow.js"></script>
 
 </html> 

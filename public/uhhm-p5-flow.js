@@ -1,3 +1,7 @@
+import Timer from './utils/timer.js';
+
+let timer = new Timer('timer');
+
 const REQUIRES_GL = false;
 
 var urlParams = {};
@@ -189,45 +193,54 @@ const sketch = (p) => {
     }
   }
 
-  showVideoLink = (url, size) => {
-    size = size ? (" [size: " + (size / 1024 / 1024).toFixed(1) + "meg]") : " [unknown size]";
-    var a = document.createElement("a");
-    a.href = url;
-    var filename = url;
-    var slashNdx = filename.lastIndexOf("/");
-    if (slashNdx >= 0) {
-      filename = filename.substr(slashNdx + 1);
-    }
-    a.download = filename;
-    a.appendChild(document.createTextNode(url + size));
-    document.getElementById('container').insertBefore(a, progressElem);
-  }
-
-  startCapture = () => {
-    if (document.getElementById('duration').value !== "")
-      numFrames = document.getElementById('duration').value * fps;
-    
-    frameCount = 0;
-
-    capturer = new CCapture({
-      format: 'ffmpegserver',
-      //workersPath: "3rdparty/",
-      //format: 'gif',
-      verbose: true,
-      framerate: fps,
-      onProgress: onProgress,
-      //extension: ".mp4",
-      //codec: "libx264",
-    });
-
-    capturer.start();
-  }
-
-  onProgress = (progress) => {
-    progressNode.nodeValue = (progress * 100).toFixed(1) + "%";
-  }
 }
 
 let thep5 = new p5(sketch, 'flow-sketch');
 
 
+let showVideoLink = (url, size) => {
+  size = size ? (" [size: " + (size / 1024 / 1024).toFixed(1) + "meg]") : " [unknown size]";
+  var a = document.createElement("a");
+  a.href = url;
+  var filename = url;
+  var slashNdx = filename.lastIndexOf("/");
+  if (slashNdx >= 0) {
+    filename = filename.substr(slashNdx + 1);
+  }
+  a.download = filename;
+  a.appendChild(document.createTextNode(url + size));
+  document.getElementById('container').insertBefore(a, progressElem);
+
+  //timer.stop();
+}
+
+let startCapture = () => {
+  if (document.getElementById('duration').value !== "")
+    numFrames = document.getElementById('duration').value * thep5.fps;
+  
+  frameCount = 0;
+
+  capturer = new CCapture({
+    format: 'ffmpegserver',
+    //workersPath: "3rdparty/",
+    //format: 'gif',
+    verbose: true,
+    framerate: thep5.fps,
+    onProgress: onProgress,
+    //extension: ".mp4",
+    //codec: "libx264",
+  });
+
+  capturer.start();
+  timer.start();
+}
+
+let onProgress = (progress) => {
+  progressNode.nodeValue = "Transcoded: " + (progress * 100).toFixed(1) + "%";
+}
+
+document.getElementById('startButton').onclick = startCapture;
+
+
+
+//export { showVideoLink, startCapture };
