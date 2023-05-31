@@ -12,14 +12,20 @@
   </head>
   <body>
     <div id="container">
-        <div id="flow-sketch"></div>
-        <br/><br/>
-        <div id="resolution">Output Resolution</div>
-        Seconds:<input type="text" id="duration" value="5">
-        <button type="button" id="startButton">Start Capture</button><br/><br/>
-        <div id="timer">00:00:00</div><br/><br/>
-        <div id="progress">-</div><br/><br/>
-        
+      <div id="flow-sketch"></div>
+      <br/><br/>
+      <div id="resolution">Output Resolution</div><br/>
+      Seconds:<input type="text" id="duration" value="5">
+      <button type="button" id="startButton">Start Capture</button><br/><br/>
+      <div id="timer">00:00:00</div><br/><br/>
+      <div id="progress">-</div><br/><br/>
+      <div id="output"></div><br/><br/>
+      <div>
+        Framerate:<input type="text" id="fps" value="30">
+        Width:<input type="text" id="width" value="1080">
+        Height:<input type="text" id="height" value="1080">
+        <button type="button" id="reloadButton">Reload</button>
+      </div>
     </div>
   </body>
 
@@ -29,7 +35,7 @@
   <script src="https://uhhm-ffmpegserver.azurewebsites.net/ffmpegserver/ffmpegserver.js"></script>-->
   <script>
     let local = "http://localhost:8080/";
-    let azure = "https://uhhm-ffmpegserver.azurewebsites.net/";
+    let dev = "https://uhhm-ffmpegserver.azurewebsites.net/";
     let cc = "ffmpegserver/CCapture.js";
     let ff = "ffmpegserver/ffmpegserver.js";
 
@@ -42,8 +48,8 @@
         s1.src = local + cc;
         s2.src = local + ff;
     } else {
-        s1.src = azure + cc;
-        s2.src = azure + ff;
+        s1.src = dev + cc;
+        s2.src = dev + ff;
     }
 
     document.head.appendChild(s1);

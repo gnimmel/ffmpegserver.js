@@ -1,11 +1,9 @@
-//import Timer from './utils/timer.js';
-//import Timer from "./libraries/easytimer.js";
 import createSketch from './sketch-flow.js';
 
-const FPS = 60;
-const CANVAS_WIDTH = 1080;
-const CANVAS_HEIGHT = 1080;
-const CANVAS_SCALE = 0.5;
+const FPS = 30;
+const CANVAS_WIDTH = 540;
+const CANVAS_HEIGHT = 540;
+const CANVAS_SCALE = 1.0;
 
 
 // Check for url params
@@ -35,22 +33,25 @@ let showVideoLink = (url, size) => {
     a.download = filename;
     a.appendChild(document.createTextNode(url + size));
     document.getElementById('container').insertBefore(a, progressElem);
-  
-    //timer.stop();
   }
 
 let progressElem = document.getElementById('progress');
 let durationElem = document.getElementById('duration');
 let timerElem = document.getElementById('timer');
-let canvasWidth = (urlParams.hasOwnProperty('canvasWidth')) ? parseInt(urlParams['canvasWidth']) * CANVAS_SCALE : CANVAS_WIDTH * CANVAS_SCALE;
-let canvasHeight = (urlParams.hasOwnProperty('canvasHeight')) ? parseInt(urlParams['canvasHeight']) * CANVAS_SCALE : CANVAS_HEIGHT * CANVAS_SCALE;
-document.getElementById('resolution').textContent = 'Output Resolution: ' + canvasWidth + 'x' + canvasHeight;
 
-//const timer = new Timer(document.getElementById('timer'));
+let fpsElem = document.getElementById('fps');
+let widthElem = document.getElementById('width');
+let heightElem = document.getElementById('height');
+
+let canvasWidth = widthElem.value = (urlParams.hasOwnProperty('cw')) ? parseInt(urlParams['cw']) * CANVAS_SCALE : CANVAS_WIDTH * CANVAS_SCALE;
+let canvasHeight = heightElem.value = (urlParams.hasOwnProperty('ch')) ? parseInt(urlParams['ch']) * CANVAS_SCALE : CANVAS_HEIGHT * CANVAS_SCALE;
+let framerate = fpsElem.value = (urlParams.hasOwnProperty('fps')) ? parseInt(urlParams['fps']) : FPS;
+
+document.getElementById('resolution').textContent = 'Output Resolution: ' + canvasWidth + 'x' + canvasHeight;
 
 // Create the flow sketch
 const mySketch = createSketch(
-    FPS, 
+    framerate, 
     canvasWidth, 
     canvasHeight, 
     showVideoLink, 
@@ -62,3 +63,15 @@ let thep5 = new p5(mySketch, 'flow-sketch');
 
 // Events
 document.getElementById('startButton').onclick = thep5.onStartCapture;
+
+
+const onReload = () => {
+    //let currentURL = window.location.href;
+    let urlWithoutQueryString = window.location.protocol + "//" + window.location.host + window.location.pathname;
+
+    let queryString = `fps=${fpsElem.value}&cw=${widthElem.value}&ch=${heightElem.value}`;
+    let newURL = `${urlWithoutQueryString}?${queryString}`;
+    
+    window.location.href = newURL;
+}
+document.getElementById('reloadButton').onclick = onReload;

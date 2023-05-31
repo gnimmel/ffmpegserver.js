@@ -3,7 +3,7 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc, duratio
     return (p) => {
 
         const REQUIRES_GL = false;
-        //let fps = 30;
+
         let intPixDensity = 1;
 
         var capturer;
@@ -11,9 +11,7 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc, duratio
         var numFrames = fps * 10; // default to 5 second capture
         let startTime;
         let endTime;
-        //let scl = 0.5;
-        //let canvas;
-        //let ctx;
+        let canvasCaptureEndTime;
 
         let field;
         let w, h;
@@ -22,10 +20,6 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc, duratio
         let rows;
         let noiseZ;
         let openSimplex;
-
-
-        //let canvasWidth = (urlParams.hasOwnProperty('canvasWidth')) ? parseInt(urlParams['canvasWidth']) * scl : 1080 * scl;
-        //let canvasHeight = (urlParams.hasOwnProperty('canvasHeight')) ? parseInt(urlParams['canvasHeight']) * scl : 1080 * scl;
 
         // GUI
         let gui;
@@ -97,8 +91,7 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc, duratio
                     capturer.save(showVideoLinkFunc);
 
                     capturer = null;
-                    //timer.stop();
-                    endTime = p.millis();
+                    canvasCaptureEndTime = timerElem.textContent;
                     console.timeEnd();
                 }
 
@@ -164,7 +157,7 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc, duratio
 
         let onProgress = (progress) => {
             if (progressElem) {
-                progressElem.textContent = "Transcoded: " + (progress * 100).toFixed(1) + "%";
+                progressElem.textContent = 'Transcoded: ' + (progress * 100).toFixed(1) + '%';
                 
                 if (timerElem)
                     updateTimer();
@@ -177,6 +170,7 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc, duratio
                 numFrames = durationElem.value * fps;
 
             frameCount = 0;
+            canvasCaptureEndTime = "";
 
             capturer = new CCapture({
                 format: 'ffmpegserver',
@@ -190,7 +184,6 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc, duratio
             });
 
             capturer.start();
-            //timer.start();
             startTime = p.millis();
             console.time();
         }
@@ -202,7 +195,7 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc, duratio
             let seconds = Math.floor((duration / 1000) % 60);
             let minutes = Math.floor((duration / (1000 * 60)) % 60);
 
-            timerElem.textContent = 
+            timerElem.textContent = (canvasCaptureEndTime ? 'Canvas Stream: ' + canvasCaptureEndTime + ' / Total Time: ' : '') +
                 minutes.toString().padStart(2, '0') + ':' + 
                 seconds.toString().padStart(2, '0') + ':' + 
                 milliseconds.toString().padStart(2, '0');

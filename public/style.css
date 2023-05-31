@@ -23,7 +23,7 @@ canvas {
 	height: 100%;
   }
 
-#duration[type="text"] {
+#duration, #fps, #width, #height {
 	width: 30px;
 	margin: 10px;
 }
