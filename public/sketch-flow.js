@@ -101,7 +101,7 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc, duratio
                     endTime = p.millis();
                     console.timeEnd();
                 }
-                
+
                 if (timerElem)
                     updateTimer();
             }
@@ -163,8 +163,12 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc, duratio
         }
 
         let onProgress = (progress) => {
-            if (progressElem)
+            if (progressElem) {
                 progressElem.textContent = "Transcoded: " + (progress * 100).toFixed(1) + "%";
+                
+                if (timerElem)
+                    updateTimer();
+            }
             //progressElem.nodeValue = "Transcoded: " + (progress * 100).toFixed(1) + "%";
         }
 
@@ -194,16 +198,14 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc, duratio
         let updateTimer = () => {
             endTime = p.millis();
             let duration = p.millis() - startTime;
-            //let seconds = (endTime - startTime) / 1000;
-            //let minutes = seconds / 60;
             let milliseconds = Math.floor((duration % 1000) / 10);
-        let seconds = Math.floor((duration / 1000) % 60);
-        let minutes = Math.floor((duration / (1000 * 60)) % 60);
+            let seconds = Math.floor((duration / 1000) % 60);
+            let minutes = Math.floor((duration / (1000 * 60)) % 60);
 
-            timerElem.textContent =  //Math.floor(minutes) + "m " + Math.floor(seconds) + "s" + Math.floor(milliseconds) + "ms";
-            minutes.toString().padStart(2, '0') + ':' + 
-            seconds.toString().padStart(2, '0') + ':' + 
-            milliseconds.toString().padStart(2, '0');
+            timerElem.textContent = 
+                minutes.toString().padStart(2, '0') + ':' + 
+                seconds.toString().padStart(2, '0') + ':' + 
+                milliseconds.toString().padStart(2, '0');
         }
     };
 };
