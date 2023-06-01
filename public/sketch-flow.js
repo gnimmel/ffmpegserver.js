@@ -1,5 +1,5 @@
 
-const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc, durationElem = null, progressElem = null, timerElem = null) => {
+const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, durationElem = null, progressElem = null, timerElem = null) => {
     return (p) => {
 
         const REQUIRES_GL = false;
@@ -88,10 +88,15 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc, duratio
                     progressElem.textContent = "Rendered frames: " + frameCount + " / " + numFrames;
                 } else if (frameCount === numFrames) {
                     capturer.stop();
-                    capturer.save(showVideoLinkFunc);
+                    if (showVideoLinkFunc)
+                        capturer.save(showVideoLinkFunc);
+                    else
+                        capturer.save();
+    
 
                     capturer = null;
-                    canvasCaptureEndTime = timerElem.textContent;
+                    if (timerElem)
+                        canvasCaptureEndTime = timerElem.textContent;
                     console.timeEnd();
                 }
 
