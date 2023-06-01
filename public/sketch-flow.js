@@ -6,9 +6,9 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
 
         let intPixDensity = 1;
 
-        var capturer;
-        var frameCount = 0;
-        var numFrames = fps * 10; // default to 5 second capture
+        let capturer;
+        let frameCount = 0;
+        let numFrames = fps * 10; // default to 5 second capture
         let startTime;
         let endTime;
         let canvasCaptureEndTime;
@@ -22,6 +22,7 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
         let openSimplex;
 
         // GUI
+        /*
         let gui;
         let params = {
             textTop: "TRAP",
@@ -45,6 +46,7 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
             textScaleMax: 1.8,
             textScaleStep: 0.001
         };
+        */
 
         p.preload = () => {
             //theShader = p.loadShader('vert.glsl', 'frag.glsl');
@@ -57,14 +59,10 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
             p.createCanvas(canvasWidth, canvasHeight, (REQUIRES_GL) ? p.WEBGL : p.P2D);
             p.background(0);
 
-            //ctx = p.drawingContext;
-
             openSimplex = openSimplexNoise(Date.now());
             //openSimplex = openSimplexNoise(Math.random(42))
             size = 10;
             noiseZ = 10;
-            //canvas = document.querySelector("#canvas");
-            //ctx = canvas.getContext("2d");
             reset();
 
             //gui = p.createGui(p);
@@ -105,12 +103,12 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
             }
         }
 
-        /*function clear() {
+        /*clear = () => {
           ctx.fillStyle = "black";
           ctx.fillRect(0, 0, w, h);
         }*/
 
-        function initField() {
+        const initField = () => {
             field = new Array(columns);
             for (let x = 0; x < columns; x++) {
                 field[x] = new Array(columns);
@@ -120,7 +118,7 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
             }
         }
 
-        function calculateField() {
+        const calculateField = () => {
             for (let x = 0; x < columns; x++) {
                 for (let y = 0; y < rows; y++) {
                     let angle = openSimplex.noise3D(x / 50, y / 50, noiseZ) * Math.PI * 2;
@@ -131,7 +129,7 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
             }
         }
 
-        function reset() {
+        const reset = () => {
             w = canvasWidth;
             h = canvasHeight;
             //p.noiseSeed(Math.random());
@@ -140,7 +138,7 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
             initField();
         }
 
-        function drawField() {
+        const drawField = () => {
             p.stroke(255);
             for (let x = 0; x < columns; x++) {
                 for (let y = 0; y < rows; y++) {
@@ -167,7 +165,6 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
                 if (timerElem)
                     updateTimer();
             }
-            //progressElem.nodeValue = "Transcoded: " + (progress * 100).toFixed(1) + "%";
         }
 
         p.onStartCapture = () => {
@@ -194,14 +191,14 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
             console.time();
         }
 
-        let updateTimer = () => {
+        const updateTimer = () => {
             endTime = p.millis();
             let duration = p.millis() - startTime;
             let milliseconds = Math.floor((duration % 1000) / 10);
             let seconds = Math.floor((duration / 1000) % 60);
             let minutes = Math.floor((duration / (1000 * 60)) % 60);
 
-            timerElem.textContent = (canvasCaptureEndTime ? 'Canvas Stream: ' + canvasCaptureEndTime + ' / Total Time: ' : '') +
+            timerElem.textContent = (canvasCaptureEndTime ? 'Capture Time: ' + canvasCaptureEndTime + ' / Total Time: ' : '') +
                 minutes.toString().padStart(2, '0') + ':' + 
                 seconds.toString().padStart(2, '0') + ':' + 
                 milliseconds.toString().padStart(2, '0');
