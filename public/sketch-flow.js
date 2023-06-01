@@ -179,6 +179,7 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc, duratio
                 verbose: false,
                 framerate: fps,
                 onProgress: onProgress,
+                name: 'uhhm-shareable',
                 //extension: ".mp4",
                 //codec: "libx264",
             });

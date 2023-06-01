@@ -32,7 +32,8 @@ let showVideoLink = (url, size) => {
     }
     a.download = filename;
     a.appendChild(document.createTextNode(url + size));
-    document.getElementById('container').insertBefore(a, progressElem);
+    document.getElementById('downloadUrl').innerHTML = '';
+    document.getElementById('downloadUrl').appendChild(a);
   }
 
 let progressElem = document.getElementById('progress');

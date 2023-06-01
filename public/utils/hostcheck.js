@@ -17,4 +17,4 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
 }
 
 document.head.appendChild(s1);
-document.head.appendChild(s2);
+document.head.appendChild(s2);  
