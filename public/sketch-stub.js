@@ -39,6 +39,7 @@ let showVideoLink = (url, size) => {
 let progressElem = document.getElementById('progress');
 let durationElem = document.getElementById('duration');
 let timerElem = document.getElementById('timer');
+let renderTextElem = document.getElementById('renderText');
 
 let fpsElem = document.getElementById('fps');
 let widthElem = document.getElementById('width');
@@ -58,7 +59,8 @@ const mySketch = createSketch(
     showVideoLink, 
     durationElem, 
     progressElem,
-    timerElem
+    timerElem,
+    renderTextElem
     );
 let thep5 = new p5(mySketch, 'flow-sketch');
 

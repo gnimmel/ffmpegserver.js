@@ -1,5 +1,5 @@
 
-const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, durationElem = null, progressElem = null, timerElem = null) => {
+const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, durationElem = null, progressElem = null, timerElem = null, renderTextElem = null) => {
     return (p) => {
 
         const REQUIRES_GL = false;
@@ -8,10 +8,11 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
 
         let capturer;
         let frameCount = 0;
-        let numFrames = fps * 10; // default to 5 second capture
+        let numFrames = fps * 5; // default to 5 second capture
         let startTime;
         let endTime;
         let canvasCaptureEndTime;
+        let font;
 
         let field;
         let w, h;
@@ -50,7 +51,7 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
 
         p.preload = () => {
             //theShader = p.loadShader('vert.glsl', 'frag.glsl');
-            //f = p.loadFont("Nunito-SemiBold.ttf");
+            font = p.loadFont("AUTHENTICSans-130.otf");
         }
 
         p.setup = () => {
@@ -76,6 +77,24 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
             p.clear();
             p.background(0);
             drawField();
+            p.noStroke();
+            p.fill(0);
+            p.rect(0, canvasHeight*0.85, canvasWidth, canvasHeight*0.85);
+            p.fill(255,255,255);
+            //p.textFont('Arial');
+            p.textAlign(p.CENTER, p.CENTER);
+
+            p.textSize(18);
+            p.text(fps + " fps, " + durationElem.value + " secs, " + canvasWidth + "x" + canvasHeight, parseInt(canvasWidth*0.5), parseInt(canvasHeight*0.9));
+            //p.textSize(24);
+            p.text(timerElem.textContent, parseInt(canvasWidth*0.5), parseInt(canvasHeight*0.95));
+            
+            p.textFont(font);
+            p.fill(255,255,0);
+            p.textSize(50);
+            
+            p.text(renderTextElem.value, parseInt(canvasWidth*0.5), parseInt(canvasHeight*0.4));
+            
 
             if (capturer) {
                 capturer.capture(document.getElementById('defaultCanvas0'));
