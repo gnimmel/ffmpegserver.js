@@ -55,6 +55,8 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
         }
 
         p.setup = () => {
+            console.log("fps: " + fps);
+
             p.frameRate(fps);
             p.pixelDensity(intPixDensity);
             p.createCanvas(canvasWidth, canvasHeight, (REQUIRES_GL) ? p.WEBGL : p.P2D);
@@ -63,7 +65,7 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
             openSimplex = openSimplexNoise(Date.now());
             //openSimplex = openSimplexNoise(Math.random(42))
             size = 10;
-            noiseZ = 10;
+            noiseZ = 5;
             reset();
 
             //gui = p.createGui(p);
