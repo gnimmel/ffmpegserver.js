@@ -35,14 +35,13 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
             p.background(0);
 
             video = p.createVideo('videos/UHHM_Shareable_Asset_Inspired_6.mp4');
+            video.volume(0);
+            video.loop();
+            video.hide();
             video.elt.setAttribute('playsinline', true);
             video.elt.setAttribute('autoplay', true);
             video.elt.setAttribute('loop', true);
             video.elt.setAttribute('muted', true);
-
-            video.volume(0);
-            video.loop();
-            video.hide();
         }
 
         p.draw = () => {
