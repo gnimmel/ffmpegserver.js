@@ -81,7 +81,7 @@ function startServer() {
   });
 }
 
-var apiPort = process.env.EXPRESS_API_PORT || 4000;
+var apiPort = process.env.EXPRESS_API_PORT || 80;
 
 var path = require('path');
 var express = require('express');
@@ -100,8 +100,8 @@ app.get('/capture', async (req, res) => {
   //const url = `http://localhost:${args.port}/${assetname}`;
   //const url = `http://localhost:8081/uhhm-p5-flow.html`;
   //const url = `http://uhhm-ffmpegserver.azurewebsites.net/:${args.port}/${assetname}`;
-  const url = `http://uhhm-ffmpegserver.azurewebsites.net:8081/uhhm-p5-flow.html?name=${assetname}`;
-  //const url = `http://localhost:8081/uhhm-p5-flow.html?name=${assetname}`;
+  //const url = `http://uhhm-ffmpegserver.azurewebsites.net:8081/uhhm-p5-flow.html?name=${assetname}`;
+  const url = `http://localhost:8081/uhhm-p5-flow.html?name=${assetname}`;
 
   try {
     //const browser = await puppeteer.launch({headless: false, executablePath: '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome',});
