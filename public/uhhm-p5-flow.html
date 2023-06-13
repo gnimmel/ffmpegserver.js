@@ -13,11 +13,11 @@
       <div id="flow-sketch"></div>
       <br/><br/>
       <div id="resolution">Output Resolution</div><br/>
-      Seconds:<input type="text" id="duration" value="5">
+      Seconds:<input type="text" id="duration" value="3">
       <button type="button" id="startButton">Start Capture</button><br/><br/>
       <div id="timer">00:00:00</div><br/><br/>
       <div id="progress">Progress...</div><br/><br/>
-      <div id="downloadUrl">Download url: </div><br/><br/>
+      <div id="downloadDiv">Download url: </div><br/><br/>
       <div>
         Framerate:<input type="text" id="fps" value="30">
         Width:<input type="text" id="width" value="1080">
@@ -47,6 +47,7 @@
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         s1.src = local + cc;
         s2.src = local + ff;
+        
     } else {
         s1.src = dev + cc;
         s2.src = dev + ff;

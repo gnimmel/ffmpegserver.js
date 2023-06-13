@@ -73,7 +73,100 @@ function startServer() {
   args.videoDir = path.join(process.cwd(), args.videoDir);
   args.frameDir = path.join(process.cwd(), args.frameDir);
   var server = new VideoServer(args);
+
+  app.listen(apiPort, () => {
+    console.log(`Express server is running on http://localhost:${apiPort}`);
+  });
 }
+
+var apiPort = process.env.EXPRESS_API_PORT || 4000;
+
+var path = require('path');
+var express = require('express');
+//var puppeteer = require('puppeteer');
+var playwright = require('playwright');
+
+var app = express();
+
+app.get('/capture', async (req, res) => {
+  const assetname = req.query.name;
+
+  if (!assetname) {
+    return res.status(400).send({ error: 'Missing name parameter' });
+  }
+
+  //const url = `http://localhost:${args.port}/${assetname}`;
+  //const url = `http://localhost:8081/uhhm-p5-flow.html`;
+  //const url = `http://uhhm-ffmpegserver.azurewebsites.net/:${args.port}/${assetname}`;
+  const url = `http://localhost:8081/uhhm-p5-flow.html?name=${assetname}`;
+
+  try {
+    //const browser = await puppeteer.launch({headless: false, executablePath: '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome',});
+    //const page = await browser.newPage();
+    const browser = await playwright.webkit.launch({headless: false});
+    const context = await browser.newContext();
+    const page = await context.newPage();
+
+    page.on('console', msg => {
+      if (msg.type() === 'log') {
+        for (let i = 0; i < msg.args().length; ++i)
+          console.log(`${i}: ${msg.args()[i]}`);
+      }
+    });
+    await page.goto(url);
+    console.log(`url opened: ${url}`);
+    
+    await page.waitForTimeout(2000);
+    
+    // Start the video capture.
+    try {
+      await page.click('#startButton');
+    } catch (error) {
+      console.error('Failed to click the start button:', error);
+    }
+
+    // Assume the download URL will appear in an element with id 'downloadUrl'.
+    try {
+      await page.waitForSelector('#downloadUrl', { timeout: 30000 }); // wait
+    } catch (error) {
+      // The 'download-link' element didn't appear in time
+      await browser.close();
+      return res.status(500).send({ error: 'The download link did not appear in time' });
+    }
+
+    const videoUrl = await page.evaluate(() => {
+      // This function runs in the browser context.
+      const linkElement = document.querySelector('#downloadUrl');
+      return linkElement ? linkElement.href : null;
+    });
+
+    //await browser.close();
+
+    if (videoUrl) {
+      res.send({ videoUrl: videoUrl });
+    } else {
+      res.status(404).send({ error: 'Download URL not found' });
+    }
+  } catch (error) {
+    // An unexpected error occurred.
+    console.error(error);
+    res.status(500).send({ error: 'Failed to get video URL' });
+  }
+
+  /*try {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.goto(url);
+    const screenshot = await page.screenshot({ encoding: 'base64' });
+    await browser.close();
+
+    res.send({ screenshot: screenshot });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: 'Failed to take screenshot' });
+  }*/
+
+});
 
 startServer();
 

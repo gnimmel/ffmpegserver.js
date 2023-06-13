@@ -115,6 +115,7 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
         }
 
         p.onStartCapture = () => {
+            console.log("Starting capture");
             if (durationElem && durationElem.value !== "")
                 numFrames = durationElem.value * fps;
 

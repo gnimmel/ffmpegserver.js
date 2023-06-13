@@ -24,6 +24,7 @@ for (let pair of pams.entries()) {
 let showVideoLink = (url, size) => {
     size = size ? (" [size: " + (size / 1024 / 1024).toFixed(1) + "meg]") : " [unknown size]";
     var a = document.createElement("a");
+    a.id = 'downloadUrl';
     a.href = url;
     var filename = url;
     var slashNdx = filename.lastIndexOf("/");
@@ -32,11 +33,14 @@ let showVideoLink = (url, size) => {
     }
     a.download = filename;
     a.appendChild(document.createTextNode(url + size));
-    document.getElementById('downloadUrl').innerHTML = '';
-    document.getElementById('downloadUrl').appendChild(a);
+    document.getElementById('container').insertBefore(a, dowloadElem);
+
+    //document.getElementById('downloadUrl').innerHTML = '';
+    //document.getElementById('downloadUrl').appendChild(a);
   }
 
 let progressElem = document.getElementById('progress');
+let dowloadElem = document.getElementById('downloadDiv');
 let durationElem = document.getElementById('duration');
 let timerElem = document.getElementById('timer');
 let renderTextElem = document.getElementById('renderText');
@@ -67,6 +71,16 @@ let thep5 = new p5(mySketch, 'the-sketch');
 // Events
 document.getElementById('startButton').onclick = thep5.onStartCapture;
 
+if (urlParams['name'])
+{
+  var name = urlParams['name'];  
+  thep5.onStartCapture();
+}
+else
+{
+  var name = "Name is missing";
+}
+console.log(name);
 
 const onReload = () => {
     //let currentURL = window.location.href;
