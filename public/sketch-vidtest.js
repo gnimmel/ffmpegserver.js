@@ -2,7 +2,7 @@
 const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, durationElem = null, progressElem = null, timerElem = null, renderTextElem = null) => {
     return (p) => {
 
-        const REQUIRES_GL = false;
+        const REQUIRES_GL = true;
         let w_gloffset = (REQUIRES_GL) ? -(canvasWidth/2) : 0
         let h_gloffset = (REQUIRES_GL) ? -(canvasHeight/2) : 0
 

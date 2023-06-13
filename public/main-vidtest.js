@@ -22,17 +22,24 @@ for (let pair of pams.entries()) {
 }
 
 let showVideoLink = (url, size) => {
+    console.log("showVideoLink: " + url);
     size = size ? (" [size: " + (size / 1024 / 1024).toFixed(1) + "meg]") : " [unknown size]";
     var a = document.createElement("a");
     a.id = 'downloadUrl';
     a.href = url;
+    
+    var baseUrl = window.location.protocol + "//" + window.location.host;
+    console.log(baseUrl);
+    
     var filename = url;
     var slashNdx = filename.lastIndexOf("/");
+    
     if (slashNdx >= 0) {
       filename = filename.substr(slashNdx + 1);
     }
-    a.download = filename;
-    a.appendChild(document.createTextNode(url + size));
+    var downloadlink = baseUrl + "/output/" + filename;
+    a.download = downloadlink;
+    a.appendChild(document.createTextNode(downloadlink));
     document.getElementById('container').insertBefore(a, dowloadElem);
 
     //document.getElementById('downloadUrl').innerHTML = '';

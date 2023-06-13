@@ -116,7 +116,7 @@ app.get('/capture', async (req, res) => {
     await page.goto(url);
     console.log(`url opened: ${url}`);
     
-    await page.waitForTimeout(2000); // Wait for video to load
+    await page.waitForTimeout(3000); // Wait for video to load
 
     // Start the video capture.
     try {
