@@ -77,9 +77,11 @@ function startServer() {
   //app.use('/output', express.static(path.join(__dirname, 'output')));
 
   app.listen(apiPort, () => {
-    console.log(`Capture api server is running on ${apiPort}`);
+    console.log(`API port: ${apiPort}`);
   });
 }
+
+const RUN_HEADLESS = true;
 
 //var apiPort = process.env.PORT || 4000;
 var apiPort = 4000;
@@ -88,6 +90,11 @@ var path = require('path');
 var express = require('express');
 //var puppeteer = require('puppeteer');
 var playwright = require('playwright');
+
+if (!RUN_HEADLESS) {
+  const Xvfb = require('xvfb');
+  const xvfb = new Xvfb();
+}
 
 var app = express();
 
@@ -106,57 +113,16 @@ app.get('/capture', async (req, res) => {
   //const url = `http://uhhm-ffmpegserver.azurewebsites.net:8081/uhhm-p5-flow.html?name=${assetname}`;
   const url = `http://localhost:8080/uhhm-p5-flow.html?name=${assetname}`;
 
-  try {
-    //const browser = await puppeteer.launch({headless: false, executablePath: '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome',});
-    //const page = await browser.newPage();
-    const browser = await playwright.webkit.launch({headless: true});
-    const context = await browser.newContext();
-    const page = await context.newPage();
 
-    page.on('console', msg => {
-      if (msg.type() === 'log') {
-        for (let i = 0; i < msg.args().length; ++i)
-          console.log(`${i}: ${msg.args()[i]}`);
-      }
-    });
-    await page.goto(url);
-    console.log(`url opened: ${url}`);
-    
-    await page.waitForTimeout(3000); // Wait for video to load
-
-    // Start the video capture.
+  if (!RUN_HEADLESS) {
     try {
-      await page.click('#startButton');
-    } catch (error) {
-      console.error('Failed to click the start button:', error);
+      xvfb.startSync();
+      doPlaywright(res);
+    } finally {
+      xvfb.stopSync();
     }
-
-    // Assume the download URL will appear in an element with id 'downloadUrl'.
-    try {
-      await page.waitForSelector('#downloadUrl', { timeout: 60000 }); // wait
-    } catch (error) {
-      // The 'download-link' element didn't appear in time
-      await browser.close();
-      return res.status(500).send({ error: 'The download link did not appear in time' });
-    }
-
-    const videoUrl = await page.evaluate(() => {
-      // This function runs in the browser context.
-      const linkElement = document.querySelector('#downloadUrl');
-      return linkElement ? linkElement.href : null;
-    });
-
-    await browser.close();
-
-    if (videoUrl) {
-      res.send({ videoUrl: videoUrl });
-    } else {
-      res.status(404).send({ error: 'Download URL not found' });
-    }
-  } catch (error) {
-    // An unexpected error occurred.
-    console.error(error);
-    res.status(500).send({ error: 'Failed to get video URL' });
+  } else {
+    doPlaywright(res);
   }
 
   /*try {
@@ -172,7 +138,73 @@ app.get('/capture', async (req, res) => {
     res.status(500).send({ error: 'Failed to take screenshot' });
   }*/
 
-});
+  });
+
+  app.get('/download/:filename', (req, res) => {
+    const filename = req.params.filename;
+    const filePath = path.join(__dirname, '../output', filename);
+  
+    res.download(filePath, (err) => {
+      if (err) {
+        res.status(404).send(`File not found: ${filePath}`);
+      }
+    });
+  });
+
+  async function doPlaywright(res) {
+    try {
+      //const browser = await puppeteer.launch({headless: false, executablePath: '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome',});
+      //const page = await browser.newPage();
+      const browser = await playwright.webkit.launch({headless: false});
+      const context = await browser.newContext();
+      const page = await context.newPage();
+
+      page.on('console', msg => {
+        if (msg.type() === 'log') {
+          for (let i = 0; i < msg.args().length; ++i)
+            console.log(`${i}: ${msg.args()[i]}`);
+        }
+      });
+      await page.goto(url);
+      console.log(`url opened: ${url}`);
+      
+      //await page.waitForTimeout(3000); // Wait for video to load
+
+      // Start the video capture.
+      try {
+        await page.click('#startButton');
+      } catch (error) {
+        console.error('Failed to click the start button:', error);
+      }
+
+      // Assume the download URL will appear in an element with id 'downloadUrl'.
+      try {
+        await page.waitForSelector('#downloadUrl', { timeout: 60000 }); // wait
+      } catch (error) {
+        // The 'download-link' element didn't appear in time
+        await browser.close();
+        return res.status(500).send({ error: 'The download link did not appear in time' });
+      }
+
+      const videoUrl = await page.evaluate(() => {
+        // This function runs in the browser context.
+        const linkElement = document.querySelector('#downloadUrl');
+        return linkElement ? linkElement.href : null;
+      });
+
+      await browser.close();
+
+      if (videoUrl) {
+        res.send({ videoUrl: videoUrl });
+      } else {
+        res.status(404).send({ error: 'Download URL not found' });
+      }
+    } catch (error) {
+      // An unexpected error occurred.
+      console.error(error);
+      res.status(500).send({ error: 'Failed to get video URL' });
+    }
+  }
 
 startServer();
 

@@ -1,0 +1,56 @@
+# uhhm-p5-ffmpeg-server-app
+
+# Use an official Node runtime as the base image
+#FROM node:20
+FROM mcr.microsoft.com/playwright:v1.34.0-jammy
+
+# Install necessary dependencies
+RUN apt-get update && apt-get install -y \
+    libsoup2.4-1 \
+    libgtk-3-0 \
+    libicu66 \
+    libwoff1 \
+    libopus0 \
+    libharfbuzz0b \
+    libjpeg8 \
+    libwebp6 \
+    libenchant-2-2 \
+    libsecret-1-0 \
+    libhyphen0 \
+    libxcomposite1 \
+    libxdamage1 \
+    libgbm1 \
+    libdrm2 \
+    libpcre3 \
+    libgl1 \
+    libegl1 \
+    libwayland-client0 \
+    libwayland-cursor0 \
+    libwayland-egl1 \
+    libx11-xcb1 \
+    libgudev-1.0-0 \
+    libffi7 \
+    libevdev2 \
+    libwayland-server0 \
+    libxkbcommon0 \
+    libdbus-1-3 \
+    libgles2 \
+    libx264-160
+    
+# Set the working directory in the Docker image
+WORKDIR /app
+
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install app dependencies inside the Docker image
+RUN npm install
+
+# Copy the rest of your app's source code from your host to your image filesystem.
+COPY . .
+
+# Expose the port your app runs on
+EXPOSE 4000
+
+# Define the command to run your app
+CMD [ "node", "start.js" ]

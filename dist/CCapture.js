@@ -378,7 +378,7 @@ function CCapture( settings ) {
 		for( var j = 0; j < _timeouts.length; j++ ) {
 			if( _time >= _timeouts[ j ].triggerTime ) {
 				_timeouts[ j ].callback();
-				console.log( 'timeout!' );
+				//console.log( 'timeout!' );
 				_timeouts.splice( j, 1 );
 				continue;
 			}

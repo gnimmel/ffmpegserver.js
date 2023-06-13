@@ -37,7 +37,7 @@ let onShowVideoLink = (url, size) => {
     if (slashNdx >= 0) {
       filename = filename.substr(slashNdx + 1);
     }
-    var downloadlink = baseUrl + "/output/" + filename;
+    var downloadlink = baseUrl + "/download/" + filename;
     a.href = downloadlink;
     a.download = downloadlink;
     a.appendChild(document.createTextNode(downloadlink));
