@@ -74,6 +74,8 @@ function startServer() {
   args.frameDir = path.join(process.cwd(), args.frameDir);
   var server = new VideoServer(args);
 
+  app.use('/output', express.static(path.join(__dirname, 'output')));
+
   app.listen(apiPort, () => {
     console.log(`Express server is running on http://localhost:${apiPort}`);
   });
