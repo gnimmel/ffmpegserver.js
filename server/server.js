@@ -81,7 +81,7 @@ function startServer() {
   });
 }
 
-var apiPort = process.env.EXPRESS_API_PORT || 80;
+var apiPort = process.env.API_PORT || 80;
 
 var path = require('path');
 var express = require('express');
