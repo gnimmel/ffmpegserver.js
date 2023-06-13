@@ -127,7 +127,7 @@ app.get('/capture', async (req, res) => {
 
     // Assume the download URL will appear in an element with id 'downloadUrl'.
     try {
-      await page.waitForSelector('#downloadUrl', { timeout: 30000 }); // wait
+      await page.waitForSelector('#downloadUrl', { timeout: 60000 }); // wait
     } catch (error) {
       // The 'download-link' element didn't appear in time
       await browser.close();
@@ -140,7 +140,7 @@ app.get('/capture', async (req, res) => {
       return linkElement ? linkElement.href : null;
     });
 
-    //await browser.close();
+    await browser.close();
 
     if (videoUrl) {
       res.send({ videoUrl: videoUrl });
