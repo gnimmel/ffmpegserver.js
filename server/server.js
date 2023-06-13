@@ -103,7 +103,7 @@ app.get('/capture', async (req, res) => {
   try {
     //const browser = await puppeteer.launch({headless: false, executablePath: '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome',});
     //const page = await browser.newPage();
-    const browser = await playwright.webkit.launch({headless: false});
+    const browser = await playwright.webkit.launch({headless: true});
     const context = await browser.newContext();
     const page = await context.newPage();
 
@@ -116,8 +116,8 @@ app.get('/capture', async (req, res) => {
     await page.goto(url);
     console.log(`url opened: ${url}`);
     
-    await page.waitForTimeout(2000);
-    
+    await page.waitForTimeout(2000); // Wait for video to load
+
     // Start the video capture.
     try {
       await page.click('#startButton');
