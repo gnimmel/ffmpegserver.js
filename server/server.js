@@ -74,14 +74,15 @@ function startServer() {
   args.frameDir = path.join(process.cwd(), args.frameDir);
   var server = new VideoServer(args);
 
-  app.use('/output', express.static(path.join(__dirname, 'output')));
+  //app.use('/output', express.static(path.join(__dirname, 'output')));
 
   app.listen(apiPort, () => {
     console.log(`Capture api server is running on ${apiPort}`);
   });
 }
 
-var apiPort = process.env.PORT || 4000;
+//var apiPort = process.env.PORT || 4000;
+var apiPort = 4000;
 
 var path = require('path');
 var express = require('express');
