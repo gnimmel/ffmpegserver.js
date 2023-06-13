@@ -77,7 +77,7 @@ function startServer() {
   app.use('/output', express.static(path.join(__dirname, 'output')));
 
   app.listen(apiPort, () => {
-    console.log(`Express server is running on http://localhost:${apiPort}`);
+    console.log(`Express server is running on ${apiPort}`);
   });
 }
 
@@ -100,7 +100,8 @@ app.get('/capture', async (req, res) => {
   //const url = `http://localhost:${args.port}/${assetname}`;
   //const url = `http://localhost:8081/uhhm-p5-flow.html`;
   //const url = `http://uhhm-ffmpegserver.azurewebsites.net/:${args.port}/${assetname}`;
-  const url = `http://localhost:8081/uhhm-p5-flow.html?name=${assetname}`;
+  const url = `http://uhhm-ffmpegserver.azurewebsites.net:8081/uhhm-p5-flow.html?name=${assetname}`;
+  //const url = `http://localhost:8081/uhhm-p5-flow.html?name=${assetname}`;
 
   try {
     //const browser = await puppeteer.launch({headless: false, executablePath: '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome',});
