@@ -21,15 +21,15 @@ for (let pair of pams.entries()) {
   urlParams[pair[0]] = pair[1];
 }
 
-let showVideoLink = (url, size) => {
-    console.log("showVideoLink: " + url);
+let onShowVideoLink = (url, size) => {
+    //console.log("onShowVideoLink: " + url);
+
     size = size ? (" [size: " + (size / 1024 / 1024).toFixed(1) + "meg]") : " [unknown size]";
     var a = document.createElement("a");
     a.id = 'downloadUrl';
-    a.href = url;
     
     var baseUrl = window.location.protocol + "//" + window.location.host;
-    console.log(baseUrl);
+    //console.log(baseUrl);
     
     var filename = url;
     var slashNdx = filename.lastIndexOf("/");
@@ -38,10 +38,12 @@ let showVideoLink = (url, size) => {
       filename = filename.substr(slashNdx + 1);
     }
     var downloadlink = baseUrl + "/output/" + filename;
+    a.href = downloadlink;
     a.download = downloadlink;
     a.appendChild(document.createTextNode(downloadlink));
     document.getElementById('container').insertBefore(a, dowloadElem);
 
+    console.log("onShowVideoLink: " + downloadlink);
     //document.getElementById('downloadUrl').innerHTML = '';
     //document.getElementById('downloadUrl').appendChild(a);
   }
@@ -67,7 +69,7 @@ const mySketch = createSketch(
     framerate, 
     canvasWidth, 
     canvasHeight, 
-    showVideoLink, 
+    onShowVideoLink, 
     durationElem, 
     progressElem,
     timerElem,
