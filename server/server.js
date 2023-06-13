@@ -77,11 +77,11 @@ function startServer() {
   app.use('/output', express.static(path.join(__dirname, 'output')));
 
   app.listen(apiPort, () => {
-    console.log(`Express server is running on ${apiPort}`);
+    console.log(`Capture api server is running on ${apiPort}`);
   });
 }
 
-var apiPort = process.env.API_PORT || 80;
+var apiPort = process.env.PORT || 4000;
 
 var path = require('path');
 var express = require('express');
@@ -92,6 +92,8 @@ var app = express();
 
 app.get('/capture', async (req, res) => {
   const assetname = req.query.name;
+
+  console.log(`app.get capture assetname: ${assetname}`);
 
   if (!assetname) {
     return res.status(400).send({ error: 'Missing name parameter' });
