@@ -49,7 +49,7 @@ define([
     var _connected = false;
     var _handlers = {};
     var _settings;
-
+    console.log("FFMpegServer FFMpegServer FFMpegServer");
   // var FakeFrameEncoder = function() {
   //   var _handlers = {};
   //   this.start = noop;
@@ -80,12 +80,14 @@ define([
         if (scriptNames[scriptName]) {
           var u = new URL(script.src);
           var url = "ws://" + u.host;
+          console.log(`FFMpegServer::getWebSocketURL: ${url}`);
           return url;
         }
       }
     }
 
     this.start = function( settings ) {
+      console.log(`FFMpegServer::start: ${settings}`);
       _settings = settings || {};
     };
 
@@ -139,6 +141,7 @@ define([
     }
 
     function _handleEnd(data) {
+      console.log(`FFMpegServer::_handleEnd: ${data}`);
       _emit('finished', data.pathname, data.size);
     }
 

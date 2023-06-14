@@ -79,7 +79,7 @@ let thep5 = new p5(mySketch, 'the-sketch');
 
 // Events
 document.getElementById('startButton').onclick = thep5.onStartCapture;
-
+/*
 if (urlParams['name'])
 {
   var name = urlParams['name'];  
@@ -90,7 +90,7 @@ else
   var name = "Name is missing";
 }
 console.log(name);
-
+*/
 const onReload = () => {
     //let currentURL = window.location.href;
     let urlWithoutQueryString = window.location.protocol + "//" + window.location.host + window.location.pathname;
