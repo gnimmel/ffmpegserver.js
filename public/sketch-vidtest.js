@@ -28,13 +28,25 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
 
         p.setup = () => {
             console.log("fps: " + fps);
-
+            console.log("SETUP SETUP SETUP SETUP SETUP SETUP SETUP");
             p.frameRate(fps);
             p.pixelDensity(intPixDensity);
             p.createCanvas(canvasWidth, canvasHeight, (REQUIRES_GL) ? p.WEBGL : p.P2D);
             p.background(0);
 
-            video = p.createVideo('videos/UHHM_Shareable_Asset_Inspired_6.mp4');
+            video = p.createVideo('videos/UHHM_Shareable_Asset_Inspired_6.mp4', videoLoaded);
+            function videoLoaded() {
+                console.log('Video Loaded');
+                myVideo.play();  // Play the video
+            }
+
+            video.elt.oncanplaythrough = function() {
+                console.log("Video can play through without stopping for buffering.");
+            }
+            video.elt.onerror = function() {
+                console.log("An error occurred while loading the video.");
+            }
+
             video.volume(0);
             video.loop();
             video.hide();
@@ -126,7 +138,7 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
                 format: 'ffmpegserver',
                 //workersPath: "3rdparty/",
                 //format: 'gif',
-                verbose: true,
+                verbose: false,
                 framerate: fps,
                 onProgress: onProgress,
                 name: 'uhhm-shareable-test',

@@ -127,8 +127,8 @@ function VideoEncoder(client, server, id, options) {
 
       args = args.concat([
         "-framerate", framerate,
- //       "-pattern_type", "sequence",
- //       "-start_number", "0",
+        "-pattern_type", "sequence",
+        "-start_number", "0",
         "-i", framesname,
         "-y",
       ]);

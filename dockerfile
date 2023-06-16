@@ -1,73 +1,31 @@
-FROM ubuntu:jammy
+# Set ffmpeg as base image
+FROM jrottenberg/ffmpeg:latest AS ffmpeg_base
 
-ARG DEBIAN_FRONTEND=noninteractive
-ARG TZ=America/Los_Angeles
-ARG DOCKER_IMAGE_NAME_TEMPLATE="mcr.microsoft.com/playwright:v%version%-jammy"
+# Set playwright as base image
+FROM mcr.microsoft.com/playwright:v1.35.0-focal
 
-# === INSTALL Node.js ===
-
-RUN apt-get update && \
-    # Install Node 18
-    apt-get install -y curl wget gpg && \
-    curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
-    apt-get install -y nodejs && \
-    # Feature-parity with node.js base images.
-    apt-get install -y --no-install-recommends git openssh-client && \
-    npm install -g yarn && \
-    #Install libx264
-    apt-get install -y libx264-dev && \
-    # clean apt cache
-    rm -rf /var/lib/apt/lists/* && \
-    # Create the pwuser
-    adduser pwuser
-
-# === BAKE BROWSERS INTO IMAGE ===
-
-ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
-
-# 1. Add tip-of-tree Playwright package to install its browsers.
-#    The package should be built beforehand from tip-of-tree Playwright.
-COPY ./playwright-1.35.0.tgz /tmp/playwright-1.35.0.tgz
-
-# 2. Bake in browsers & deps.
-#    Browsers will be downloaded in `/ms-playwright`.
-#    Note: make sure to set 777 to the registry so that any user can access
-#    registry.
-RUN mkdir /ms-playwright && \
-    mkdir /ms-playwright-agent && \
-    cd /ms-playwright-agent && npm init -y && \
-    npm i /tmp/playwright-1.35.0.tgz && \
-    npm exec --no -- playwright-core mark-docker-image "${DOCKER_IMAGE_NAME_TEMPLATE}" && \
-    npm exec --no -- playwright-core install --with-deps && rm -rf /var/lib/apt/lists/* && \
-    rm /tmp/playwright-1.35.0.tgz && \
-    rm -rf /ms-playwright-agent && \
-    chmod -R 777 /ms-playwright
-
-# Install Google Chrome
-#??????
-
-# For video playnback ?????
-
-# Set the working directory in the Docker image
+# Create app directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
+# Copy ffmpeg binaries
+COPY --from=ffmpeg_base / /app/ffmpeg
+
+# Install app dependencies
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
 COPY package*.json ./
 
-# Install app dependencies inside the Docker image
 RUN npm install
+# If you are building your code for production
+# RUN npm ci --only=production
 
-# Copy the rest of your app's source code from your host to your image filesystem.
+
+# Bundle app source
 COPY . .
 
-RUN chmod -R 777 /app/output
-RUN chmod -R 777 /app/node_modules/ffmpeg-static/ffmpeg
-
-# Expose the port your app runs on
-EXPOSE 4000
+# Expose port
 EXPOSE 8080
 EXPOSE 8081
-EXPOSE 80
+EXPOSE 4000
 
-# Define the command to run your app
+# Run the app
 CMD [ "node", "start.js" ]

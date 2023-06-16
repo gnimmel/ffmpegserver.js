@@ -75,6 +75,7 @@ function startServer() {
   var server = new VideoServer(args);
 
   app.use('/output', express.static(path.join(__dirname, 'output')));
+  app.use('/videos', express.static(path.join(__dirname, 'public/videos')));
 
   app.listen(apiPort, () => {
     console.log(`API port: ${apiPort}`);
@@ -109,7 +110,14 @@ app.get('/capture', async (req, res) => {
   try {
     //const browser = await puppeteer.launch({headless: false, executablePath: '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome',});
     //const page = await browser.newPage();
-    const browser = await playwright.chromium.launch( {args: ["--ipc=host", "--mute-audio"], video: 'on', headless: false, chromiumSandbox: false} ); //, executablePath: "/usr/bin/google-chrome"
+    const browser = await playwright.chromium.launch( { 
+      args: ["--ipc=host", "--mute-audio"], 
+      //executablePath: "/usr/local/bin/chromedriver",
+      video: 'on', 
+      headless: false, 
+      chromiumSandbox: false
+    } ); 
+
     const context = await browser.newContext();
     const page = await context.newPage();
 
@@ -126,7 +134,7 @@ app.get('/capture', async (req, res) => {
 
     // Start the video capture.
     try {
-      await page.click('#startButton');
+      //await page.click('#startButton');
     } catch (error) {
       console.error('Failed to click the start button:', error);
     }

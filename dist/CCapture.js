@@ -373,12 +373,12 @@ function CCapture( settings ) {
 
 		_time += _settings.step;
 		_frameCount++;
-//		_log( 'Frame: ' + _frameCount );
+		_log( 'Frame: ' + _frameCount );
 
 		for( var j = 0; j < _timeouts.length; j++ ) {
 			if( _time >= _timeouts[ j ].triggerTime ) {
 				_timeouts[ j ].callback();
-//				console.log( 'timeout!' );
+				console.log( 'timeout!' );
 				_timeouts.splice( j, 1 );
 				continue;
 			}
