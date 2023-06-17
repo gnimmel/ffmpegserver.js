@@ -74,8 +74,9 @@ function startServer() {
   args.frameDir = path.join(process.cwd(), args.frameDir);
   var server = new VideoServer(args);
 
-  app.use('/output', express.static(path.join(__dirname, 'output')));
-  app.use('/videos', express.static(path.join(__dirname, 'public/videos')));
+  //app.use('/output', express.static(path.join(__dirname, 'output')));
+  app.use('/videos', express.static(path.join(__dirname, '/videos')));
+  app.use(express.static('/videos'));
 
   app.listen(apiPort, () => {
     console.log(`API port: ${apiPort}`);
@@ -110,11 +111,16 @@ app.get('/capture', async (req, res) => {
   try {
     //const browser = await puppeteer.launch({headless: false, executablePath: '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome',});
     //const page = await browser.newPage();
-    const browser = await playwright.chromium.launch( { 
-      args: ["--ipc=host", "--mute-audio"], 
-      //executablePath: "/usr/local/bin/chromedriver",
+    const browser = await playwright.firefox.launch( { 
+      args: [
+        "--ipc=host", 
+        "--mute-audio", 
+        //'--disable-gpu'
+      ], 
+      //executablePath: "/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary",
+      //executablePath: "/usr/bin/chromium",
       video: 'on', 
-      headless: false, 
+      headless: true, 
       chromiumSandbox: false
     } ); 
 
@@ -130,14 +136,15 @@ app.get('/capture', async (req, res) => {
     await page.goto(url);
     console.log(`url opened: ${url}`);
     
-    //await page.waitForTimeout(3000); // Wait for video to load
-
     // Start the video capture.
+    // Moving this to video.oncanplaythrough handler
+    /*
     try {
-      //await page.click('#startButton');
+      await page.click('#startButton');
     } catch (error) {
       console.error('Failed to click the start button:', error);
     }
+    */
 
     // Assume the download URL will appear in an element with id 'downloadUrl'.
     try {

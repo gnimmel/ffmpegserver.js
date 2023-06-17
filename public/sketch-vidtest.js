@@ -26,22 +26,28 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
             font = p.loadFont("fonts/PPMori-Regular.otf");
         }
 
+        function videoLoaded() {
+            console.log('Video Loaded');
+            video.play();  // Play the video
+        }
+
         p.setup = () => {
             console.log("fps: " + fps);
-            console.log("SETUP SETUP SETUP SETUP SETUP SETUP SETUP");
+            console.log("sketch::SETUP");
             p.frameRate(fps);
             p.pixelDensity(intPixDensity);
+            console.log("sketch::createCanvas:before");
             p.createCanvas(canvasWidth, canvasHeight, (REQUIRES_GL) ? p.WEBGL : p.P2D);
+            console.log("sketch::createCanvas:after");
             p.background(0);
 
+            console.log("sketch::createVideo");
             video = p.createVideo('videos/UHHM_Shareable_Asset_Inspired_6.mp4', videoLoaded);
-            function videoLoaded() {
-                console.log('Video Loaded');
-                myVideo.play();  // Play the video
-            }
+            
 
             video.elt.oncanplaythrough = function() {
                 console.log("Video can play through without stopping for buffering.");
+                p.onStartCapture();
             }
             video.elt.onerror = function() {
                 console.log("An error occurred while loading the video.");
