@@ -127,10 +127,17 @@ app.get('/capture', async (req, res) => {
     const context = await browser.newContext();
     const page = await context.newPage();
 
+    page.on('pageerror', err => {
+      console.error('Page error: ', err.toString());
+    });
+    
     page.on('console', msg => {
       if (msg.type() === 'log') {
         for (let i = 0; i < msg.args().length; ++i)
           console.log(`${i}: ${msg.args()[i]}`);
+      }
+      if (msg.type() === 'error') {
+        console.error(msg.text());
       }
     });
     await page.goto(url);

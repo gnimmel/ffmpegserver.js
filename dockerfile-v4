@@ -14,7 +14,7 @@ WORKDIR /app
 COPY --from=ffmpeg_base / /app/ffmpeg
 
 # Set noninteractive environment for apt-get
-ENV DEBIAN_FRONTEND noninteractive
+#ENV DEBIAN_FRONTEND noninteractive
 
 # Install app dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
@@ -28,32 +28,32 @@ RUN npm install
 COPY . .
 
 # Step 2: Set the environment to noninteractive
-ENV DEBIAN_FRONTEND noninteractive
+#ENV DEBIAN_FRONTEND noninteractive
 
 #RUN apt-get update; apt-get clean
-RUN apt-get update && apt-get upgrade -y
+#RUN apt-get update && apt-get upgrade -y
 
 # Install wget.
 #RUN apt-get install -y wget
 
 #RUN apt-get install -y gnupg
 
-RUN apt-get update && apt-get install -y apt-transport-https
+#RUN apt-get update && apt-get install -y apt-transport-https
 
 #RUN apt-get install -y aptitude
 
 # Chrome installation
-RUN curl -LO  https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-RUN dpkg -i ./google-chrome-stable_current_amd64.deb 
-RUN apt-get install -fy
-RUN rm google-chrome-stable_current_amd64.deb
-
+#RUN curl -LO  https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+#RUN dpkg -i ./google-chrome-stable_current_amd64.deb 
+#RUN apt-get install -fy
+#RUN rm google-chrome-stable_current_amd64.deb
+#RUN apt-get update && apt-get install -y chromium
 
 # Check chrome version
 #RUN echo "Chrome: " && google-chrome --version
-RUN find / -name chrome 2>/dev/null
-RUN find / -name google-chrome-stable 2>/dev/null
-RUN find / -name chromium 2>/dev/null
+#RUN find / -name chromium-browser 2>/dev/null
+#RUN find / -name google-chrome-stable 2>/dev/null
+#RUN find / -name chromium 2>/dev/null
 
 # Expose port
 EXPOSE 8080
