@@ -78,7 +78,7 @@ const mySketch = createSketch(
 let thep5 = new p5(mySketch, 'the-sketch');
 
 // Events
-document.getElementById('startButton').onclick = thep5.onStartCapture;
+//document.getElementById('startButton').onclick = thep5.onStartCapture;
 /*
 if (urlParams['name'])
 {

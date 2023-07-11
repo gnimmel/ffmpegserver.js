@@ -1,24 +1,29 @@
+import { setupSphere, drawSphere } from './text_animations/sphere/sphere.js';
 
-const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, durationElem = null, progressElem = null, timerElem = null, renderTextElem = null) => {
+const createSketch = (fps, canvasWidth, canvasHeight, lyrics, textColor, videoPath, showVideoLinkFunc = null) => {
     return (p) => {
 
+        const DURATION = 15;
         const REQUIRES_GL = true;
+
         let w_gloffset = (REQUIRES_GL) ? -(canvasWidth/2) : 0
         let h_gloffset = (REQUIRES_GL) ? -(canvasHeight/2) : 0
 
-        let intPixDensity = 1;
+        let intPixDensity = 2;
 
         let capturer;
         let frameCount = 0;
-        let numFrames = fps * 5; // default to 5 second capture
+        let numFrames = fps * DURATION;
         let startTime;
         let endTime;
         let canvasCaptureEndTime;
         let font;
 
+        let bVideoReady = false;
+
         let params = {
-            color: [112, 255, 178],
-            text: "to rock a rhyme that's right on time, "
+            color: textColor,
+            text: lyrics
           };
         let video;
 
@@ -36,12 +41,12 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
             console.log("sketch::SETUP");
             p.frameRate(fps);
             p.pixelDensity(intPixDensity);
-            console.log("sketch::createCanvas:before");
+            //console.log("sketch::createCanvas:before");
             p.createCanvas(canvasWidth, canvasHeight, (REQUIRES_GL) ? p.WEBGL : p.P2D);
-            console.log("sketch::createCanvas:after");
+            //console.log("sketch::createCanvas:after");
             p.background(0);
 
-            let filePath = "videos/UHHM_Shareable_Asset_Inspired_6.mp4";
+            let filePath = videoPath;
             p.httpDo(
                 filePath,
                 'GET',
@@ -53,9 +58,9 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
                 }
             );
             
-            console.log("sketch::createVideo:before");
-            video = p.createVideo('videos/UHHM_Shareable_Asset_Emotional_4.mp4', videoLoaded);
-            console.log("sketch::createVideo:after");
+            //console.log("sketch::createVideo:before");
+            video = p.createVideo(videoPath, videoLoaded);
+            //console.log("sketch::createVideo:after");
             
             video.elt.onloadstart = function() {
                 console.log("Video load started.");
@@ -67,6 +72,7 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
             video.elt.oncanplaythrough = function() {
                 console.log("Video can play through without stopping for buffering.");
                 //p.onStartCapture();
+                bVideoReady = true;
             }
             video.elt.onerror = function() {
                 console.log("An error occurred while loading the video.");
@@ -76,45 +82,32 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
             video.loop();
             video.hide();
             video.elt.setAttribute('playsinline', true);
-            video.elt.setAttribute('autoplay', true);
+            //video.elt.setAttribute('autoplay', true);
             video.elt.setAttribute('loop', true);
             video.elt.setAttribute('muted', true);
+
+            setupSphere(p, font, lyrics);
         }
 
         p.draw = () => {
+            if (!bVideoReady) return;
+
             p.image(video, w_gloffset, h_gloffset, p.width, p.height);
 
+            drawSphere(p);
+            /*
             p.textFont(font);
             p.textSize(90 * (p.width / 1080));
             p.textLeading(100 * (p.width / 1080))
             p.noStroke();
             p.textAlign(p.CENTER, p.CENTER);
-            p.fill(params.color[0], params.color[1], params.color[2]);
-            p.text(params.text, 
+            p.fill(textColor[0], textColor[1], textColor[2]);
+            p.text(lyrics, 
                 parseInt(p.width*0.5)-parseInt(p.width*0.25) + w_gloffset, 
                 parseInt(p.height*0.5)-parseInt(p.height*0.25) + h_gloffset, 
                 parseInt(p.width*0.5), 
                 parseInt(p.height*0.5));
-
-            // Render stats
-            p.noStroke();
-            //p.fill(0);
-            //p.rect(0, canvasHeight*0.85, canvasWidth, canvasHeight*0.85);
-            p.fill(255,255,255);
-            p.textAlign(p.CENTER, p.CENTER);
-            p.textSize(18);
-            p.text(fps + " fps, " + durationElem.value + " secs, " + canvasWidth + "x" + canvasHeight, 
-                parseInt(canvasWidth*0.5) + w_gloffset, 
-                parseInt(canvasHeight*0.9) + h_gloffset);
-            //p.textSize(24);
-            p.text(timerElem.textContent, parseInt(canvasWidth*0.5) + w_gloffset, parseInt(canvasHeight*0.95) + h_gloffset);
-            
-            //p.textFont(font);
-            //p.fill(255,255,0);
-            //p.textSize(50);
-            
-            //p.text(renderTextElem.value, parseInt(canvasWidth*0.5), parseInt(canvasHeight*0.4));
-            
+            */
 
             if (capturer) {
                 capturer.capture(document.getElementById('defaultCanvas0'));
@@ -153,9 +146,7 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
 
         p.onStartCapture = () => {
             console.log("Starting capture");
-            if (durationElem && durationElem.value !== "")
-                numFrames = durationElem.value * fps;
-
+            
             frameCount = 0;
             canvasCaptureEndTime = "";
 

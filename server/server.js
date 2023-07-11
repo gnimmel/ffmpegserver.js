@@ -104,7 +104,7 @@ app.get('/capture', async (req, res) => {
 
   //const url = `http://uhhm-ffmpegserver.azurewebsites.net/:${args.port}/${assetname}`;
   //const url = `http://uhhm-ffmpegserver.azurewebsites.net:8081/uhhm-p5-flow.html?name=${assetname}`;
-  const url = `http://localhost:8080/uhhm-p5-flow.html?name=${assetname}`;
+  const url = `http://localhost:8080/uhhm-capturer.html?name=${assetname}`;
 
 
   // Playwright junk
