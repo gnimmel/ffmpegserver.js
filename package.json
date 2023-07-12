@@ -1,22 +1,19 @@
 {
-  "name": "ffmpegserver.js",
-  "version": "0.0.1",
+  "name": "uhhm-shareable",
+  "version": "1.0.0",
   "description": "Server for encoding canvas frames as video",
   "main": "start.js",
+  "bin": "start.js",
   "scripts": {
     "test": "node node_modules/mocha/bin/mocha --recursive",
-    "start": "node start.js"
+    "start": "node start.js",
+    "build": "pkg ."
   },
-  "keywords": [
-    "video",
-    "canvas",
-    "encode",
-    "encoder",
-    "encoding",
-    "webgl"
-  ],
-  "author": "Gregg Tavares",
-  "license": "MIT",
+  "pkg": {
+    "targets": ["latest-linux-x64", "latest-macos-arm64", "latest-win-x64"],
+    "assets": ["output/**/*", "public/**/*"],
+    "outputPath": "dist"
+  },
   "dependencies": {
     "busboy": "^0.3.1",
     "debug": "^4.1.1",
@@ -26,7 +23,6 @@
     "optionator": "^0.8.3",
     "playwright": "^1.35.0",
     "playwright-core": "^1.35.0",
-    "puppeteer": "^20.6.0",
     "tmp": "^0.1.0",
     "ws": "^7.2.1",
     "xvfb": "^0.4.0"

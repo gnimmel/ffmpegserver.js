@@ -74,9 +74,15 @@ function startServer() {
   args.frameDir = path.join(process.cwd(), args.frameDir);
   var server = new VideoServer(args);
 
+  /*app.use(function(req, res, next) {
+    //res.setHeader("Content-Security-Policy", "default-src 'self' http://localhost:8080");
+    res.setHeader("Content-Security-Policy", "default-src * 'unsafe-inline' 'unsafe-eval'");
+    next();
+  });*/
+  
   //app.use('/output', express.static(path.join(__dirname, 'output')));
-  app.use('/videos', express.static(path.join(__dirname, '/videos')));
-  app.use(express.static('/videos'));
+  //app.use('/videos', express.static(path.join(__dirname, '/videos')));
+  //app.use(express.static('/videos'));
 
   app.listen(apiPort, () => {
     console.log(`API port: ${apiPort}`);
@@ -92,6 +98,8 @@ var express = require('express');
 var playwright = require('playwright');
 
 var app = express();
+
+//app.get('/favicon.ico', (req, res) => res.status(204));
 
 app.get('/capture', async (req, res) => {
   const assetname = req.query.name;
@@ -114,14 +122,13 @@ app.get('/capture', async (req, res) => {
     const browser = await playwright.firefox.launch( { 
       args: [
         "--ipc=host", 
-        "--mute-audio", 
-        //'--disable-gpu'
+        "--mute-audio"
       ], 
       //executablePath: "/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary",
       //executablePath: "/usr/bin/chromium",
       video: 'on', 
       headless: true, 
-      chromiumSandbox: false
+      //chromiumSandbox: false
     } ); 
 
     const context = await browser.newContext();
