@@ -66,7 +66,7 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
             }
             video.elt.oncanplaythrough = function() {
                 console.log("Video can play through without stopping for buffering.");
-                //p.onStartCapture();
+                p.onStartCapture();
             }
             video.elt.onerror = function() {
                 console.log("An error occurred while loading the video.");

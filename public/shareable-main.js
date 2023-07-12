@@ -1,9 +1,9 @@
 import createSketch from './sketch.js';
 
 const TMP_LYRICS = "to rock a rhyme that's right on time";
-const TMP_COLOR = [112, 255, 178];
-//const TMP_VID_PATH = "videos/UHHM_Shareable_Asset_Inspired_6.mp4";
 const TMP_VID_PATH = "videos/UHHM_Shareable_Asset_Competitive_3.mp4";
+//const TMP_VID_PATH = "videos/UHHM_Shareable_Asset_Inspired_6.mp4";
+const TMP_COLOR = [112, 255, 178];
 
 const FPS = 30;
 const CANVAS_WIDTH = 540;
