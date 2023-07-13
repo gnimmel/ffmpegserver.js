@@ -131,6 +131,7 @@ function VideoEncoder(client, server, id, options) {
         "-start_number", "0",
         "-i", framesname,
         "-y",
+        "-v debug"
       ]);
 
       if (codec) {

@@ -11,7 +11,7 @@
   },
   "pkg": {
     "targets": ["latest-linux-x64", "latest-macos-arm64", "latest-win-x64"],
-    "assets": ["output/**/*", "public/**/*"],
+    "assets": ["output/**/*", "public/**/*", "node_modules/ffmpeg-static/ffmpeg"],
     "outputPath": "dist"
   },
   "dependencies": {

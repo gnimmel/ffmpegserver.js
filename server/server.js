@@ -93,13 +93,34 @@ function startServer() {
 var apiPort = 4000;
 
 var path = require('path');
+const fs = require('fs');
 var express = require('express');
-//var puppeteer = require('puppeteer');
 var playwright = require('playwright');
 
 var app = express();
+//app.use(express.static('public'));
+//app.use('../public', express.static(path.join(__dirname, '../public')));
 
 //app.get('/favicon.ico', (req, res) => res.status(204));
+
+app.get('/list-all-files', (req, res) => {
+  const directoryPath = path.join(__dirname, '../public');
+  fs.readdir(directoryPath, function (err, files) {
+    if (err) {
+      return res.status(500).send('Unable to scan directory: ' + err);
+    } 
+    res.send(files);
+  });
+});
+
+/*app.get('/uhhm-capturer.html', (req, res) => {
+  const filePath = path.join(__dirname, 'public', 'uhhm-capturer.html');
+  if (fs.existsSync(filePath)) {
+      res.sendFile(filePath);
+  } else {
+      res.status(404).send('File not found');
+  }
+});*/
 
 app.get('/capture', async (req, res) => {
   const assetname = req.query.name;
@@ -110,25 +131,54 @@ app.get('/capture', async (req, res) => {
     return res.status(400).send({ error: 'Missing name parameter' });
   }
 
-  //const url = `http://uhhm-ffmpegserver.azurewebsites.net/:${args.port}/${assetname}`;
-  //const url = `http://uhhm-ffmpegserver.azurewebsites.net:8081/uhhm-p5-flow.html?name=${assetname}`;
-  const url = `http://localhost:8080/uhhm-capturer.html?name=${assetname}`;
+  if (process.pkg)
+    console.log(`I'm in the pkg WOOHOO: ${process.execPath}`);
 
+  const html = 'uhhm-capturer.html';
+  const filePath = path.join(__dirname, '../public', html);
+  console.log(`path: ${filePath}`);
+  
+  
+  const url = "http://localhost:8080/launch-capturer";// + html + '?name=' + assetname;
+  console.log(`url: ${url}`);
+
+  //const file = path.join(__dirname, '../public', 'uhhm-capturer.html');
+  //console.log(`path: ${file}`);
+  //const capUrl = new url.URL('file://' + file);
+
+  //capUrl.searchParams.append('name', assetname);
+  //url.searchParams.append('lyrics', '');
+
+  //path.join(__dirname, 'uhhm-capturer.html');
+  //const url = `http://localhost:8080/uhhm-capturer.html?name=${assetname}`;
+
+
+  let execPath;
+  if (process.platform === 'win32') {
+    // Windows
+    execPath = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
+  } else if (process.platform === 'linux') {
+    // Linux
+    execPath = '';
+  } else if (process.platform === 'darwin') {
+    // macOS
+    execPath = '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge';
+  }
 
   // Playwright junk
   try {
     //const browser = await puppeteer.launch({headless: false, executablePath: '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome',});
     //const page = await browser.newPage();
-    const browser = await playwright.firefox.launch( { 
+    const browser = await playwright.chromium.launch( { 
       args: [
         "--ipc=host", 
         "--mute-audio"
       ], 
       //executablePath: "/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary",
-      //executablePath: "/usr/bin/chromium",
+      executablePath: execPath,
       video: 'on', 
-      headless: true, 
-      //chromiumSandbox: false
+      headless: false, 
+      chromiumSandbox: false
     } ); 
 
     const context = await browser.newContext();
@@ -147,6 +197,7 @@ app.get('/capture', async (req, res) => {
         console.error(msg.text());
       }
     });
+
     await page.goto(url);
     console.log(`url opened: ${url}`);
     

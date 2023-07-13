@@ -16,6 +16,8 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
         let canvasCaptureEndTime;
         let font;
 
+        let bVideoReady = false;
+
         let params = {
             color: [112, 255, 178],
             text: "to rock a rhyme that's right on time, "
@@ -66,7 +68,10 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
             }
             video.elt.oncanplaythrough = function() {
                 console.log("Video can play through without stopping for buffering.");
-                p.onStartCapture();
+                if (!bVideoReady) {
+                    p.onStartCapture();
+                    bVideoReady = true;
+                }
             }
             video.elt.onerror = function() {
                 console.log("An error occurred while loading the video.");
@@ -82,6 +87,8 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
         }
 
         p.draw = () => {
+            if (!bVideoReady) return;
+            
             p.image(video, w_gloffset, h_gloffset, p.width, p.height);
 
             p.textFont(font);
