@@ -90,19 +90,15 @@ var VideoServer = function(options, startedCallback) {
   app.get(/^\/frameencoder\/downloads\/(.*?)$/, handleDownload);
   app.options(/.*/, handleOPTIONS);
   app.use('/ffmpegserver', express.static(path.join(__dirname, '..', 'dist')));
-  if (process.pkg) {
-    let publicDir = path.join(path.dirname(process.execPath), '..', 'public');
-    app.use(express.static(publicDir));
-    //let outputDir = path.join(path.dirname(process.execPath), '..', 'output');
-    app.use('/output', express.static(path.join(__dirname, '..', 'output')));
-    //app.use(express.static(path.join(__dirname, '..', 'public')));
-  }
-  app.use(express.static(g.baseDir));
+
+  app.use(express.static(path.join(__dirname, '..', g.baseDir)));
 
   app.get('/launch-capturer', (req, res) => {
     let filePath = path.join(__dirname, '..', 'public', 'uhhm-capturer.html');
+    console.log('__dirname: ' + filePath);
     if (process.pkg) {
-        filePath = path.join(path.dirname(process.execPath), '..', 'public', 'uhhm-capturer.html');
+      filePath = path.join(path.dirname(process.execPath), 'public', 'uhhm-capturer.html');
+      console.log('PKG PKG PKG: ' + filePath);
     }
     console.log(`app.get filepath: ${filePath}`);
 

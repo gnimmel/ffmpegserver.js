@@ -1,5 +1,7 @@
 import createSketch from './sketch.js';
 
+// TODO: Handle landscape and portriat
+// 
 const FPS = 30;
 const CANVAS_WIDTH = 540;
 const CANVAS_HEIGHT = 960;
@@ -16,37 +18,26 @@ var urlObj = new URL(url);
 var pams = new URLSearchParams(urlObj.search);
 
 // What params have we been passed?
-for (let pair of pams.entries()) {
+for (let pair of pams.entries()) 
+{
   console.log(pair[0] + ', ' + pair[1]);
   urlParams[pair[0]] = pair[1];
 }
 
-let onShowVideoLink = (url, size) => {
-    //console.log("onShowVideoLink: " + url);
-
-    size = size ? (" [size: " + (size / 1024 / 1024).toFixed(1) + "meg]") : " [unknown size]";
-    var a = document.createElement("a");
-    a.id = 'downloadUrl';
-    
-    var baseUrl = window.location.protocol + "//" + window.location.host;
-    //console.log(baseUrl);
-    
-    var filename = url;
-    var slashNdx = filename.lastIndexOf("/");
-    
-    if (slashNdx >= 0) {
-      filename = filename.substr(slashNdx + 1);
-    }
-    var downloadlink = baseUrl + "/download/" + filename;
-    a.href = downloadlink;
-    a.download = downloadlink;
-    a.appendChild(document.createTextNode(downloadlink));
-    document.getElementById('container').insertBefore(a, dowloadElem);
-
-    console.log("onShowVideoLink: " + downloadlink);
-    //document.getElementById('downloadUrl').innerHTML = '';
-    //document.getElementById('downloadUrl').appendChild(a);
-  }
+let onCaptureComplete = () => 
+{
+  fetch('http://localhost:4000/kill-capture', {
+    method: 'GET', 
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    mode: 'no-cors' // no-cors mode for fetch
+    })
+    .then(response => response.json())
+    .catch((error) => {
+    console.error('Error:', error);
+  });
+}
 
 let progressElem = document.getElementById('progress');
 let dowloadElem = document.getElementById('downloadDiv');
@@ -69,35 +60,11 @@ const mySketch = createSketch(
     framerate, 
     canvasWidth, 
     canvasHeight, 
-    onShowVideoLink, 
+    onCaptureComplete.toString(),  
     durationElem, 
     progressElem,
     timerElem,
     renderTextElem
     );
+
 let thep5 = new p5(mySketch, 'the-sketch');
-
-// Events
-//document.getElementById('startButton').onclick = thep5.onStartCapture;
-/*
-if (urlParams['name'])
-{
-  var name = urlParams['name'];  
-  thep5.onStartCapture();
-}
-else
-{
-  var name = "Name is missing";
-}
-console.log(name);
-*/
-const onReload = () => {
-    //let currentURL = window.location.href;
-    let urlWithoutQueryString = window.location.protocol + "//" + window.location.host + window.location.pathname;
-
-    let queryString = `fps=${fpsElem.value}&cw=${widthElem.value}&ch=${heightElem.value}`;
-    let newURL = `${urlWithoutQueryString}?${queryString}`;
-    
-    window.location.href = newURL;
-}
-document.getElementById('reloadButton').onclick = onReload;

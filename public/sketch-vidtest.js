@@ -139,11 +139,12 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
     
 
                     capturer = null;
-                    
+                    /*
                     let a = document.createElement("a");
                     a.id = 'downloadUrl';
                     a.textContent = "FINISHED";
                     document.getElementById('container').appendChild(a);
+                    */
                     /*
                     fetch('http://localhost:4000/kill-capture', {
                         method: 'GET', 
