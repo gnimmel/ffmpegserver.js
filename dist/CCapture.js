@@ -73,7 +73,7 @@ function CCFFMpegServerEncoder( settings ) {
         this.emit( 'process' )
     }.bind( this ) );
     this.encoder.on('finished', function( url, size ) {
-        var cb = this.callback;
+        var cb = (typeof this.callback === 'string') ? new Function('return ' + this.callback)() : this.callback;
         if ( cb ) {
             this.callback = undefined;
             cb( url, size );
@@ -106,7 +106,7 @@ CCFFMpegServerEncoder.prototype.add = function( canvas ) {
 
 CCFFMpegServerEncoder.prototype.save = function( callback ) {
 
-    this.callback = callback;
+	this.callback = callback;
     this.encoder.end();
 
 }

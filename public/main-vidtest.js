@@ -21,17 +21,32 @@ for (let pair of pams.entries()) {
   urlParams[pair[0]] = pair[1];
 }
 
-let onShowVideoLink = (url, size) => {
+function onShowVideoLink() {
+
+  fetch('http://localhost:4000/kill-capture', {
+        method: 'GET', 
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        mode: 'no-cors' // no-cors mode for fetch
+        })
+        .then(response => response.json())
+        .catch((error) => {
+        console.error('Error:', error);
+    });
+  
     //console.log("onShowVideoLink: " + url);
 
-    size = size ? (" [size: " + (size / 1024 / 1024).toFixed(1) + "meg]") : " [unknown size]";
-    var a = document.createElement("a");
+    //let fsize = size ? (" [size: " + (size / 1024 / 1024).toFixed(1) + "meg]") : " [unknown size]";
+    /*
+    let a = document.createElement("a");
     a.id = 'downloadUrl';
-    
-    var baseUrl = window.location.protocol + "//" + window.location.host;
+    a.textContent = "FINISHED";
+    */
+    //var baseUrl = window.location.protocol + "//" + window.location.host;
     //console.log(baseUrl);
     
-    var filename = url;
+    /*var filename = url;
     var slashNdx = filename.lastIndexOf("/");
     
     if (slashNdx >= 0) {
@@ -39,11 +54,12 @@ let onShowVideoLink = (url, size) => {
     }
     var downloadlink = baseUrl + "/download/" + filename;
     a.href = downloadlink;
-    a.download = downloadlink;
-    a.appendChild(document.createTextNode(downloadlink));
-    document.getElementById('container').insertBefore(a, dowloadElem);
+    a.download = downloadlink;*/
+    //a.appendChild(document.createTextNode("FINISHED"));
+    
+    //document.getElementById('container').appendChild(a);
 
-    console.log("onShowVideoLink: " + downloadlink);
+    //console.log("onShowVideoLink: " + downloadlink);
     //document.getElementById('downloadUrl').innerHTML = '';
     //document.getElementById('downloadUrl').appendChild(a);
   }
@@ -69,7 +85,7 @@ const mySketch = createSketch(
     framerate, 
     canvasWidth, 
     canvasHeight, 
-    onShowVideoLink, 
+    onShowVideoLink.toString(), 
     durationElem, 
     progressElem,
     timerElem,

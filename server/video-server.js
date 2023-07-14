@@ -87,13 +87,6 @@ var VideoServer = function(options, startedCallback) {
     }, 1);
   };
 
-//  app.use(/^\/api\/v0\/uploadFile\//, busboy());
-//  app.post(/^\/api\/v0\/uploadFile\//, addUploadedFile);
-//  app.post(/.*/, bodyParser);
-//  app.get(/^\/frameencoder\/frameencoder\.js$/, function(req, res) {
-//    debug("send frameencoder");
-//    res.end("frameencoder");
-//  });
   app.get(/^\/frameencoder\/downloads\/(.*?)$/, handleDownload);
   app.options(/.*/, handleOPTIONS);
   app.use('/ffmpegserver', express.static(path.join(__dirname, '..', 'dist')));
@@ -103,14 +96,7 @@ var VideoServer = function(options, startedCallback) {
     //let outputDir = path.join(path.dirname(process.execPath), '..', 'output');
     app.use('/output', express.static(path.join(__dirname, '..', 'output')));
     //app.use(express.static(path.join(__dirname, '..', 'public')));
-}
-  /*const publicPath = process.pkg 
-  ? path.join(process.execPath, '..', g.baseDir) 
-  : g.baseDir;
-
-  app.use(express.static(publicPath));
-  app.use(express.static(path.join(__dirname, g.baseDir)));
-  */
+  }
   app.use(express.static(g.baseDir));
 
   app.get('/launch-capturer', (req, res) => {

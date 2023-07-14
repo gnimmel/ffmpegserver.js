@@ -130,8 +130,7 @@ function VideoEncoder(client, server, id, options) {
         "-pattern_type", "sequence",
         "-start_number", "0",
         "-i", framesname,
-        "-y",
-        "-v debug"
+        "-y"
       ]);
 
       if (codec) {

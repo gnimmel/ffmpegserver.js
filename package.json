@@ -10,11 +10,20 @@
     "build": "pkg ."
   },
   "pkg": {
-    "targets": ["latest-linux-x64", "latest-macos-arm64", "latest-win-x64"],
-    "assets": ["output/**/*", "public/**/*", "node_modules/ffmpeg-static/ffmpeg"],
+    "targets": [
+      "latest-linux-x64",
+      "latest-macos-arm64",
+      "latest-win-x64"
+    ],
+    "assets": [
+      "output/**/*",
+      "public/**/*",
+      "./node_modules/@ffmpeg-installer/**"
+    ],
     "outputPath": "dist"
   },
   "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "busboy": "^0.3.1",
     "debug": "^4.1.1",
     "easytimer.js": "^4.5.4",

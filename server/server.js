@@ -32,6 +32,8 @@
 'use strict';
 
 var path = require('path');
+const fs = require('fs');
+const os = require('os');
 
 var optionSpec = {
   options: [
@@ -49,6 +51,19 @@ var optionSpec = {
     initialIndent: 4,
   },
 };
+
+
+// Define the output directory path in the user's home directory
+const outputDirPath = path.join(os.homedir(), 'output');
+
+// Check if the directory exists
+if (!fs.existsSync(outputDirPath)) {
+    // If the directory doesn't exist, create it
+    fs.mkdirSync(outputDirPath, { recursive: true, mode: 0o755 });
+} else {
+    // If the directory already exists, update its permissions to be read/write
+    fs.chmodSync(outputDirPath, 0o755);
+}
 
 var optionator = require('optionator')(optionSpec);
 
@@ -87,13 +102,16 @@ function startServer() {
   app.listen(apiPort, () => {
     console.log(`API port: ${apiPort}`);
   });
+
+  const ffmpeg = require('@ffmpeg-installer/ffmpeg');
+  //const { exec } = require('child_process');
+
+  console.log(ffmpeg.path, ffmpeg.version);
 }
 
 //var apiPort = process.env.PORT || 4000;
 var apiPort = 4000;
 
-var path = require('path');
-const fs = require('fs');
 var express = require('express');
 var playwright = require('playwright');
 
@@ -122,6 +140,8 @@ app.get('/list-all-files', (req, res) => {
   }
 });*/
 
+let browser = null;
+
 app.get('/capture', async (req, res) => {
   const assetname = req.query.name;
 
@@ -139,7 +159,8 @@ app.get('/capture', async (req, res) => {
   console.log(`path: ${filePath}`);
   
   
-  const url = "http://localhost:8080/launch-capturer";// + html + '?name=' + assetname;
+  //const url = "http://localhost:8080/launch-capturer";// + html + '?name=' + assetname;
+  const url = "http://localhost:8080/uhhm-capturer.html";// + html + '?name=' + assetname;
   console.log(`url: ${url}`);
 
   //const file = path.join(__dirname, '../public', 'uhhm-capturer.html');
@@ -169,7 +190,7 @@ app.get('/capture', async (req, res) => {
   try {
     //const browser = await puppeteer.launch({headless: false, executablePath: '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome',});
     //const page = await browser.newPage();
-    const browser = await playwright.chromium.launch( { 
+    browser = await playwright.chromium.launch( { 
       args: [
         "--ipc=host", 
         "--mute-audio"
@@ -200,43 +221,45 @@ app.get('/capture', async (req, res) => {
 
     await page.goto(url);
     console.log(`url opened: ${url}`);
-    
-    // Start the video capture.
-    // Moving this to video.oncanplaythrough handler
-    /*
-    try {
-      await page.click('#startButton');
-    } catch (error) {
-      console.error('Failed to click the start button:', error);
-    }
-    */
+
+    res.status(202).json({
+      message: 'Playwright process launched successfully',
+      assetname: assetname
+    });
+
+    res.send();
 
     // Assume the download URL will appear in an element with id 'downloadUrl'.
-    try {
-      await page.waitForSelector('#downloadUrl', { timeout: 60000 }); // wait
+   /*try {
+      await page.waitForSelector('#downloadUrl'); //, { timeout: 20000 }); // wait
+      //await page.waitForFunction('document.querySelector("#progress").innerText.includes("100")', { timeout: 60000 });
+
     } catch (error) {
       // The 'download-link' element didn't appear in time
       await browser.close();
       return res.status(500).send({ error: 'The download link did not appear in time' });
-    }
+    }*/
 
-    const videoUrl = await page.evaluate(() => {
+    /*const videoUrl = await page.evaluate(() => {
       // This function runs in the browser context.
       const linkElement = document.querySelector('#downloadUrl');
       return linkElement ? linkElement.href : null;
-    });
+    });*/
 
-    await browser.close();
-
-    if (videoUrl) {
+    /*if (videoUrl) {
       res.send({ videoUrl: videoUrl });
     } else {
       res.status(404).send({ error: 'Download URL not found' });
-    }
+    }*/
+
   } catch (error) {
     // An unexpected error occurred.
     console.error(error);
-    res.status(500).send({ error: 'Failed to get video URL' });
+    res.status(500).send({ error: 'Playwright failed' });
+    if (browser) {
+      await browser.close();
+      browser = null;
+    }
   }
 
   /*try {
@@ -252,6 +275,14 @@ app.get('/capture', async (req, res) => {
     res.status(500).send({ error: 'Failed to take screenshot' });
   }*/
 
+  });
+
+  app.get('/kill-capture', (req, res) => {
+    if (browser) {
+      browser.close();
+      browser = null;
+    }
+    res.status(200).send({ success: 'Playwright killed' });
   });
 
   app.get('/download/:filename', (req, res) => {
