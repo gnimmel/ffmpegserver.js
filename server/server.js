@@ -52,18 +52,25 @@ var optionSpec = {
   },
 };
 
+try {
+  // Define the output directory path in the user's home directory
+  let outputDirPath;
+  if (process.platform === 'win32')
+    outputDirPath = path.join(os.homedir(), 'Desktop', 'output');
+  else
+    outputDirPath = path.join(os.homedir(), 'output');
 
-// Define the output directory path in the user's home directory
-const outputDirPath = path.join(os.homedir(), 'output');
-
-// Check if the directory exists
-if (!fs.existsSync(outputDirPath)) {
-    // If the directory doesn't exist, create it
-    fs.mkdirSync(outputDirPath, { recursive: true, mode: 0o755 });
-} else {
-    // If the directory already exists, update its permissions to be read/write
-    fs.chmodSync(outputDirPath, 0o755);
-}
+  // Check if the directory exists
+  if (!fs.existsSync(outputDirPath)) {
+      // If the directory doesn't exist, create it
+      fs.mkdirSync(outputDirPath, { recursive: true, mode: 0o755 });
+  } else {
+      // If the directory already exists, update its permissions to be read/write
+      fs.chmodSync(outputDirPath, 0o755);
+  }
+} catch (e) {
+  console.error(e);
+};
 
 var optionator = require('optionator')(optionSpec);
 
@@ -103,10 +110,8 @@ function startServer() {
     console.log(`API port: ${apiPort}`);
   });
 
-  const ffmpeg = require('@ffmpeg-installer/ffmpeg');
-  //const { exec } = require('child_process');
-
-  console.log(ffmpeg.path, ffmpeg.version);
+  //const ffmpeg = require('@ffmpeg-installer/ffmpeg');
+  //console.log(ffmpeg.path, ffmpeg.version);
 }
 
 //var apiPort = process.env.PORT || 4000;
@@ -114,8 +119,10 @@ var apiPort = 4000;
 
 var express = require('express');
 var playwright = require('playwright');
+const cors = require('cors')
 
 var app = express();
+app.use(cors())
 //app.use(express.static('public'));
 //app.use('../public', express.static(path.join(__dirname, '../public')));
 
@@ -151,8 +158,8 @@ app.get('/capture', async (req, res) => {
     return res.status(400).send({ error: 'Missing name parameter' });
   }
 
-  if (process.pkg)
-    console.log(`I'm in the pkg WOOHOO: ${process.execPath}`);
+  //if (process.pkg)
+  //  console.log(`I'm in the pkg WOOHOO: ${process.execPath}`);
 
   const html = 'uhhm-capturer.html';
   const filePath = path.join(__dirname, '../public', html);
@@ -178,9 +185,9 @@ app.get('/capture', async (req, res) => {
   if (process.platform === 'win32') {
     // Windows
     execPath = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
-  } else if (process.platform === 'linux') {
+  //} else if (process.platform === 'linux') {
     // Linux
-    execPath = '';
+  //  execPath = '';
   } else if (process.platform === 'darwin') {
     // macOS
     execPath = '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge';
@@ -278,23 +285,30 @@ app.get('/capture', async (req, res) => {
   });
 
   app.get('/kill-capture', (req, res) => {
+    res.status(200).send({ success: 'killing playwright browser' });
+
     if (browser) {
-      browser.close();
-      browser = null;
+        setTimeout(async () => {
+            try {
+                await browser.close();
+                browser = null;
+            } catch (error) {
+                console.error('Error closing browser: ', error);
+            }
+        }, 1000); // delay of 1000ms (1 second)
     }
-    res.status(200).send({ success: 'Playwright killed' });
   });
 
-  app.get('/download/:filename', (req, res) => {
-    const filename = req.params.filename;
-    const filePath = path.join(__dirname, '../output', filename);
-  
-    res.download(filePath, (err) => {
-      if (err) {
-        res.status(404).send(`File not found: ${filePath}`);
-      }
-    });
+/*app.get('/download/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(__dirname, '../output', filename);
+
+  res.download(filePath, (err) => {
+    if (err) {
+      res.status(404).send(`File not found: ${filePath}`);
+    }
   });
+});*/
 
 startServer();
 

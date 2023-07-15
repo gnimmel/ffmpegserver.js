@@ -22,47 +22,24 @@ for (let pair of pams.entries()) {
 }
 
 function onShowVideoLink() {
-
   fetch('http://localhost:4000/kill-capture', {
         method: 'GET', 
         headers: {
             'Content-Type': 'application/json',
-        },
-        mode: 'no-cors' // no-cors mode for fetch
-        })
-        .then(response => response.json())
-        .catch((error) => {
-        console.error('Error:', error);
-    });
-  
-    //console.log("onShowVideoLink: " + url);
-
-    //let fsize = size ? (" [size: " + (size / 1024 / 1024).toFixed(1) + "meg]") : " [unknown size]";
-    /*
-    let a = document.createElement("a");
-    a.id = 'downloadUrl';
-    a.textContent = "FINISHED";
-    */
-    //var baseUrl = window.location.protocol + "//" + window.location.host;
-    //console.log(baseUrl);
-    
-    /*var filename = url;
-    var slashNdx = filename.lastIndexOf("/");
-    
-    if (slashNdx >= 0) {
-      filename = filename.substr(slashNdx + 1);
+        }//,
+        //mode: 'no-cors' // no-cors mode for fetch
+  })
+  .then(response => {
+    if (response.status === 200) {
+      console.log('Request succeeded');
+    } else {
+      console.log('Request failed', response);
     }
-    var downloadlink = baseUrl + "/download/" + filename;
-    a.href = downloadlink;
-    a.download = downloadlink;*/
-    //a.appendChild(document.createTextNode("FINISHED"));
-    
-    //document.getElementById('container').appendChild(a);
-
-    //console.log("onShowVideoLink: " + downloadlink);
-    //document.getElementById('downloadUrl').innerHTML = '';
-    //document.getElementById('downloadUrl').appendChild(a);
-  }
+  })
+  .catch(error => {
+    console.error('Fetch error:', error);
+  });
+}
 
 let progressElem = document.getElementById('progress');
 let dowloadElem = document.getElementById('downloadDiv');
@@ -85,7 +62,7 @@ const mySketch = createSketch(
     framerate, 
     canvasWidth, 
     canvasHeight, 
-    onShowVideoLink.toString(), 
+    onShowVideoLink, 
     durationElem, 
     progressElem,
     timerElem,

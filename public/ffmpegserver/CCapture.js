@@ -73,10 +73,15 @@ function CCFFMpegServerEncoder( settings ) {
         this.emit( 'process' )
     }.bind( this ) );
     this.encoder.on('finished', function( url, size ) {
-        var cb = (typeof this.callback === 'string') ? new Function('return ' + this.callback)() : this.callback;
+		var cb = this.callback;
         if ( cb ) {
             this.callback = undefined;
-            cb( url, size );
+			//console.log('Calling the callback function', cb); // to see if the function is as expected
+			try {
+				cb();
+			} catch (error) {
+				console.error('Error when calling the callback function:', error);
+			}
         }
     }.bind( this ) );
     this.encoder.on( 'progress', function( progress ) {

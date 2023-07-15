@@ -16,8 +16,13 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
         let canvasCaptureEndTime;
         let font;
 
+        let theCanvas = null;
         let bVideoReady = false;
 
+        let virtualTime = 0;
+        let virtualFrameRate = fps;  // number of frames per second
+        let frameDuration = 1 / virtualFrameRate;  // duration of a single frame in seconds
+        
         let params = {
             color: [112, 255, 178],
             text: "to rock a rhyme that's right on time, "
@@ -55,19 +60,19 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
                 }
             );
             
-            console.log("sketch::createVideo:before");
+            //console.log("sketch::createVideo:before");
             video = p.createVideo('videos/UHHM_Shareable_Asset_Emotional_4.mp4', videoLoaded);
-            console.log("sketch::createVideo:after");
+            //console.log("sketch::createVideo:after");
             
             video.elt.onloadstart = function() {
                 console.log("Video load started.");
             }
             video.elt.oncanplay = function() {
-                console.log("Video can play.");
+                //console.log("Video can play.");
                 //p.onStartCapture();
             }
             video.elt.oncanplaythrough = function() {
-                console.log("Video can play through without stopping for buffering.");
+                //console.log("Video can play through without stopping for buffering.");
                 if (!bVideoReady) {
                     p.onStartCapture();
                     bVideoReady = true;
@@ -84,11 +89,14 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
             video.elt.setAttribute('autoplay', true);
             video.elt.setAttribute('loop', true);
             video.elt.setAttribute('muted', true);
+
+            theCanvas = document.getElementById('defaultCanvas0');
         }
 
         p.draw = () => {
             if (!bVideoReady) return;
             
+            video.time(virtualTime);
             p.image(video, w_gloffset, h_gloffset, p.width, p.height);
 
             p.textFont(font);
@@ -124,9 +132,11 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
             
 
             if (capturer) {
-                capturer.capture(document.getElementById('defaultCanvas0'));
+                if (video.time() > 0)
+                    capturer.capture(theCanvas);
 
                 ++frameCount;
+                virtualTime += frameDuration;
 
                 if (progressElem && frameCount < numFrames) {
                     progressElem.textContent = "Rendered frames: " + frameCount + " / " + numFrames;
