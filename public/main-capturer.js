@@ -5,8 +5,6 @@ const TMP_VID_PATH = "videos/UHHM_Shareable_Asset_Competitive_3.mp4";
 //const TMP_VID_PATH = "videos/UHHM_Shareable_Asset_Inspired_6.mp4";
 const TMP_COLOR = [112, 255, 178];
 
-// TODO: Handle landscape and portriat
-// 
 const FPS = 30;
 const CANVAS_WIDTH = 540;
 const CANVAS_HEIGHT = 960;

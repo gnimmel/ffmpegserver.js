@@ -52,6 +52,7 @@ var optionSpec = {
   },
 };
 
+// Check if output directory exists and create it if not
 try {
   // Define the output directory path in the user's home directory
   let outputDirPath;
@@ -90,18 +91,13 @@ if (args.help) {
   printHelp();
 }
 
+// Video Server
 function startServer() {
   var VideoServer = require('./video-server');
   args.videoDir = path.join(process.cwd(), args.videoDir);
   args.frameDir = path.join(process.cwd(), args.frameDir);
   var server = new VideoServer(args);
 
-  /*app.use(function(req, res, next) {
-    //res.setHeader("Content-Security-Policy", "default-src 'self' http://localhost:8080");
-    res.setHeader("Content-Security-Policy", "default-src * 'unsafe-inline' 'unsafe-eval'");
-    next();
-  });*/
-  
   //app.use('/output', express.static(path.join(__dirname, 'output')));
   //app.use('/videos', express.static(path.join(__dirname, '/videos')));
   //app.use(express.static('/videos'));
@@ -109,26 +105,27 @@ function startServer() {
   app.listen(apiPort, () => {
     console.log(`API port: ${apiPort}`);
   });
-
-  //const ffmpeg = require('@ffmpeg-installer/ffmpeg');
-  //console.log(ffmpeg.path, ffmpeg.version);
 }
 
-//var apiPort = process.env.PORT || 4000;
+// API Server
 var apiPort = 4000;
 
 var express = require('express');
 var playwright = require('playwright');
 const cors = require('cors')
 
+const model = require('../public/model');
+console.log(path.join(__dirname ,'..', 'public', 'videos'));
+if (process.pkg)
+  model.init(path.join(__dirname ,'..', 'public', 'videos'));
+else
+  model.init(path.join(process.cwd(), 'public', 'videos'));
+
+
 var app = express();
 app.use(cors())
-//app.use(express.static('public'));
-//app.use('../public', express.static(path.join(__dirname, '../public')));
 
-//app.get('/favicon.ico', (req, res) => res.status(204));
-
-app.get('/list-all-files', (req, res) => {
+/*app.get('/list-all-files', (req, res) => {
   const directoryPath = path.join(__dirname, '../public');
   fs.readdir(directoryPath, function (err, files) {
     if (err) {
@@ -136,7 +133,7 @@ app.get('/list-all-files', (req, res) => {
     } 
     res.send(files);
   });
-});
+});*/
 
 /*app.get('/uhhm-capturer.html', (req, res) => {
   const filePath = path.join(__dirname, 'public', 'uhhm-capturer.html');
@@ -157,9 +154,6 @@ app.get('/capture', async (req, res) => {
   if (!assetname) {
     return res.status(400).send({ error: 'Missing name parameter' });
   }
-
-  //if (process.pkg)
-  //  console.log(`I'm in the pkg WOOHOO: ${process.execPath}`);
 
   const html = 'uhhm-capturer.html';
   const filePath = path.join(__dirname, '../public', html);
