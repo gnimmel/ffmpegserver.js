@@ -14,17 +14,16 @@ const createSketch = (fps, canvasWidth, canvasHeight, lyrics, textColor, videoPa
         let capturer;
         let frameCount = 0;
         let numFrames = fps * DURATION;
-        let startTime;
-        let endTime;
-        let canvasCaptureEndTime;
+
         let font;
 
+        let theCanvas = null;
         let bVideoReady = false;
 
-        let params = {
-            color: textColor,
-            text: lyrics
-          };
+        let virtualTime = 0;
+        let virtualFrameRate = fps;  // number of frames per second
+        let frameDuration = 1 / virtualFrameRate;  // duration of a single frame in seconds
+
         let video;
 
         p.preload = () => {
@@ -45,18 +44,6 @@ const createSketch = (fps, canvasWidth, canvasHeight, lyrics, textColor, videoPa
             p.createCanvas(canvasWidth, canvasHeight, (REQUIRES_GL) ? p.WEBGL : p.P2D);
             //console.log("sketch::createCanvas:after");
             p.background(0);
-
-            let filePath = videoPath;
-            p.httpDo(
-                filePath,
-                'GET',
-                function(res) {
-                    console.log('File exists');
-                },
-                function(err) {
-                    console.log('File does not exist');
-                }
-            );
             
             //console.log("sketch::createVideo:before");
             video = p.createVideo(videoPath, videoLoaded);
@@ -66,13 +53,15 @@ const createSketch = (fps, canvasWidth, canvasHeight, lyrics, textColor, videoPa
                 console.log("Video load started.");
             }
             video.elt.oncanplay = function() {
-                console.log("Video can play.");
+                //console.log("Video can play.");
                 //p.onStartCapture();
             }
             video.elt.oncanplaythrough = function() {
-                console.log("Video can play through without stopping for buffering.");
-                //p.onStartCapture();
-                bVideoReady = true;
+                //console.log("Video can play through without stopping for buffering.");
+                if (!bVideoReady) {
+                    p.onStartCapture();
+                    bVideoReady = true;
+                }
             }
             video.elt.onerror = function() {
                 console.log("An error occurred while loading the video.");
@@ -87,60 +76,34 @@ const createSketch = (fps, canvasWidth, canvasHeight, lyrics, textColor, videoPa
             video.elt.setAttribute('muted', true);
 
             setupSphere(p, font, lyrics);
+
+            theCanvas = document.getElementById('defaultCanvas0');
         }
 
         p.draw = () => {
             if (!bVideoReady) return;
 
+            video.time(virtualTime);
             p.image(video, w_gloffset, h_gloffset, p.width, p.height);
 
             drawSphere(p);
-            /*
-            p.textFont(font);
-            p.textSize(90 * (p.width / 1080));
-            p.textLeading(100 * (p.width / 1080))
-            p.noStroke();
-            p.textAlign(p.CENTER, p.CENTER);
-            p.fill(textColor[0], textColor[1], textColor[2]);
-            p.text(lyrics, 
-                parseInt(p.width*0.5)-parseInt(p.width*0.25) + w_gloffset, 
-                parseInt(p.height*0.5)-parseInt(p.height*0.25) + h_gloffset, 
-                parseInt(p.width*0.5), 
-                parseInt(p.height*0.5));
-            */
 
             if (capturer) {
-                capturer.capture(document.getElementById('defaultCanvas0'));
+                if (video.time() > 0)
+                    capturer.capture(theCanvas);
 
                 ++frameCount;
+                virtualTime += frameDuration;
 
-                if (progressElem && frameCount < numFrames) {
-                    progressElem.textContent = "Rendered frames: " + frameCount + " / " + numFrames;
-                } else if (frameCount === numFrames) {
+                if (frameCount === numFrames) {
                     capturer.stop();
                     if (showVideoLinkFunc)
                         capturer.save(showVideoLinkFunc);
                     else
                         capturer.save();
-    
 
                     capturer = null;
-                    if (timerElem)
-                        canvasCaptureEndTime = timerElem.textContent;
-                    console.timeEnd();
                 }
-
-                if (timerElem)
-                    updateTimer();
-            }
-        }
-
-        let onProgress = (progress) => {
-            if (progressElem) {
-                progressElem.textContent = 'Transcoded: ' + (progress * 100).toFixed(1) + '%';
-                
-                if (timerElem)
-                    updateTimer();
             }
         }
 
@@ -148,36 +111,16 @@ const createSketch = (fps, canvasWidth, canvasHeight, lyrics, textColor, videoPa
             console.log("Starting capture");
             
             frameCount = 0;
-            canvasCaptureEndTime = "";
 
             capturer = new CCapture({
                 format: 'ffmpegserver',
-                //workersPath: "3rdparty/",
-                //format: 'gif',
                 verbose: false,
                 framerate: fps,
-                onProgress: onProgress,
+                //onProgress: onProgress,
                 name: 'uhhm-shareable-test',
-                //extension: ".mp4",
-                //codec: "libx264",
             });
 
             capturer.start();
-            startTime = p.millis();
-            console.time();
-        }
-
-        const updateTimer = () => {
-            endTime = p.millis();
-            let duration = p.millis() - startTime;
-            let milliseconds = Math.floor((duration % 1000) / 10);
-            let seconds = Math.floor((duration / 1000) % 60);
-            let minutes = Math.floor((duration / (1000 * 60)) % 60);
-
-            timerElem.textContent = (canvasCaptureEndTime ? 'Capture Time: ' + canvasCaptureEndTime + ' / Total Time: ' : '') +
-                minutes.toString().padStart(2, '0') + ':' + 
-                seconds.toString().padStart(2, '0') + ':' + 
-                milliseconds.toString().padStart(2, '0');
         }
     };
 };

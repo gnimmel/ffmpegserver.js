@@ -86,7 +86,7 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
             video.loop();
             video.hide();
             video.elt.setAttribute('playsinline', true);
-            video.elt.setAttribute('autoplay', true);
+            //video.elt.setAttribute('autoplay', true);
             video.elt.setAttribute('loop', true);
             video.elt.setAttribute('muted', true);
 
@@ -147,28 +147,7 @@ const createSketch = (fps, canvasWidth, canvasHeight, showVideoLinkFunc = null, 
                     else
                         capturer.save();
     
-
                     capturer = null;
-                    /*
-                    let a = document.createElement("a");
-                    a.id = 'downloadUrl';
-                    a.textContent = "FINISHED";
-                    document.getElementById('container').appendChild(a);
-                    */
-                    /*
-                    fetch('http://localhost:4000/kill-capture', {
-                        method: 'GET', 
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        mode: 'no-cors' // no-cors mode for fetch
-                        })
-                        .then(response => response.json())
-                        .catch((error) => {
-                        console.error('Error:', error);
-                    });
-                    */
-
 
                     if (timerElem)
                         canvasCaptureEndTime = timerElem.textContent;
