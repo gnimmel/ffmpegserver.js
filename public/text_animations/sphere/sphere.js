@@ -2,7 +2,7 @@ let img;
 //let gl;
 //let cameraX;
 
-export function setupSphere(p, font, strText) 
+export function setupSphere(p, font, strText, textColor) 
 {
   //createCanvas(windowWidth, windowHeight, WEBGL);
   p.perspective(p.PI / 3.0, p.width/p.height, 0.1, 500);
@@ -10,8 +10,8 @@ export function setupSphere(p, font, strText)
   // Create the p5.Graphics object and draw the text onto it
   img = p.createGraphics(500, 300);
   img.textSize(12);
-  img.fill(255);
-  //img.text('Hello, world!', 10, 200);
+  img.fill(textColor); // text color
+  
   img.pixelDensity(4);
   img.textFont(font);
   //textSize(20);
@@ -54,8 +54,8 @@ export function setupSphere(p, font, strText)
 
 export function drawSphere(p) 
 {
-    p.push();
-    p.camera(500, 0, 0, 0, 0, 0, 0, 1, 0);
+  p.push();
+  p.camera(500, 0, 0, 0, 0, 0, 0, 1, 0);
 
   let gl = p._renderer.GL;
   gl.enable(gl.CULL_FACE);

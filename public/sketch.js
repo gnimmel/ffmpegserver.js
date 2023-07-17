@@ -59,7 +59,8 @@ const createSketch = (fps, canvasWidth, canvasHeight, lyrics, textColor, videoPa
             video.elt.oncanplaythrough = function() {
                 //console.log("Video can play through without stopping for buffering.");
                 if (!bVideoReady) {
-                    p.onStartCapture();
+                    if (!showVideoLinkFunc)
+                        p.onStartCapture();
                     bVideoReady = true;
                 }
             }
@@ -75,7 +76,7 @@ const createSketch = (fps, canvasWidth, canvasHeight, lyrics, textColor, videoPa
             video.elt.setAttribute('loop', true);
             video.elt.setAttribute('muted', true);
 
-            setupSphere(p, font, lyrics);
+            setupSphere(p, font, lyrics, textColor);
 
             theCanvas = document.getElementById('defaultCanvas0');
         }
@@ -106,7 +107,7 @@ const createSketch = (fps, canvasWidth, canvasHeight, lyrics, textColor, videoPa
                 }
             }
         }
-
+        
         p.onStartCapture = () => {
             console.log("Starting capture");
             

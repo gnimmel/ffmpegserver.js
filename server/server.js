@@ -115,7 +115,7 @@ var playwright = require('playwright');
 const cors = require('cors')
 
 const model = require('../public/model');
-console.log(path.join(__dirname ,'..', 'public', 'videos'));
+
 if (process.pkg)
   model.init(path.join(__dirname ,'..', 'public', 'videos'));
 else
@@ -124,6 +124,182 @@ else
 
 var app = express();
 app.use(cors())
+app.use(express.json());
+app.use(express.static(path.join(__dirname, '..', 'public')));
+
+let browser = null;
+
+// Get the Sketch
+
+app.get('/test-get-sketch/', (req, res) => {
+  var id = req.query.id;
+  try {
+    if (model.getAssetData(id)) {
+      if (process.pkg)
+        res.sendFile(path.join(__dirname ,'..', 'public', 'shareable.html'));
+      else
+        res.sendFile(path.join(process.cwd(), 'public', 'shareable.html'));
+    } else {
+        res.status(404).send({ error: 'No data found for this id' });
+    }
+  } catch (error) {
+    console.log("Fetch asset data failed:", error);
+  }
+});
+
+app.post('/get-sketch', async (req, res) => {
+  const { id, emotion, lyrics, doCapture } = req.body;
+
+  // Validate request body
+  if (!id || !lyrics || !emotion || !doCapture) {
+    return res.status(400).json({
+      message: 'Request body should contain id, lyrics, emotion, and doCapture',
+    });
+  }
+
+  console.log(`Received data - id: ${id}, emotion: ${emotion}, lyrics: ${lyrics}, doCapture: ${doCapture}`);
+  model.setAssetData(id, emotion, lyrics);
+
+  if (process.pkg)
+    res.sendFile(path.join(__dirname ,'..', 'public', 'shareable.html'));
+  else
+    res.sendFile(path.join(process.cwd(), 'public', 'shareable.html'));
+
+  if (JSON.parse(doCapture)) 
+  {
+    // Construct the playwright url
+    const url = "http://localhost:8080/uhhm-capturer.html?id=" + id;
+    console.log(`url: ${url}`);
+
+    // We're using MSEdge installed in the host filesystem
+    let execPath;
+    if (process.platform === 'win32') {
+      // Windows
+      execPath = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
+    } else if (process.platform === 'darwin') {
+      // macOS
+      execPath = '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge';
+    }
+
+    // Playwright junk
+    try {
+      browser = await playwright.chromium.launch( { 
+        args: [
+          "--ipc=host", 
+          "--mute-audio"
+        ], 
+        executablePath: execPath,
+        video: 'on', 
+        headless: false, 
+        chromiumSandbox: false
+      }); 
+
+      const context = await browser.newContext();
+      const page = await context.newPage();
+
+      page.on('pageerror', err => {
+        console.error('Page error: ', err.toString());
+      });
+      page.on('console', msg => {
+        if (msg.type() === 'log') {
+          for (let i = 0; i < msg.args().length; ++i)
+            console.log(`${i}: ${msg.args()[i]}`);
+        }
+        if (msg.type() === 'error') {
+          console.error(msg.text());
+        }
+      });
+
+      await page.goto(url);
+      console.log(`url opened: ${url}`);
+
+      /*res.status(202).json({
+        message: 'Playwright process launched successfully',
+        id: id
+      });
+
+      res.send();
+      */
+    } catch (error) {
+      // An unexpected error occurred.
+      console.error(error);
+      res.status(500).send({ error: 'Playwright failed' });
+      if (browser) {
+        await browser.close();
+        browser = null;
+      }
+    }
+  }
+});
+
+  app.get('/kill-capture', (req, res) => {
+    res.status(200).send({ success: 'killing playwright browser' });
+
+    if (browser) {
+        setTimeout(async () => {
+            try {
+                await browser.close();
+                browser = null;
+            } catch (error) {
+                console.error('Error closing browser: ', error);
+            }
+        }, 1000); // delay of 1000ms (1 second)
+    }
+  });
+
+  app.get('/assetdata/:id', (req, res) => {
+    const id = req.params.id;
+  
+    if (model.getAssetData(id)) {
+        res.json(model.getAssetData(id));
+    } else {
+        res.status(404).send({ error: 'No data found for this id' });
+    }
+  });
+
+  app.post('/test-add-assetdata', async (req, res) => {
+    const { id, emotion, lyrics, doCapture } = req.body;
+  
+    // Validate request body
+    if (!id || !lyrics || !emotion || !doCapture) {
+      return res.status(400).json({
+        message: 'Request body should contain id, lyrics, emotion, and doCapture',
+      });
+    }
+  
+    console.log(`Received data - id: ${id}, emotion: ${emotion}, lyrics: ${lyrics}, doCapture: ${doCapture}`);
+    model.setAssetData(id, emotion, lyrics);
+  
+    res.status(202).json({
+      message: 'data seeded successfully',
+      id: id
+    });
+  
+    res.send();
+  });
+  
+  app.get('/test-get-sketch/', (req, res) => {
+    var id = req.query.id;
+  
+    if (model.getAssetData(id)) {
+      if (process.pkg)
+        res.sendFile(path.join(__dirname ,'..', 'public', 'shareable.html'));
+      else
+        res.sendFile(path.join(process.cwd(), 'public', 'shareable.html'));
+    } else {
+        res.status(404).send({ error: 'No data found for this id' });
+    }
+  });
+/*app.get('/download/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(__dirname, '../output', filename);
+
+  res.download(filePath, (err) => {
+    if (err) {
+      res.status(404).send(`File not found: ${filePath}`);
+    }
+  });
+});*/
 
 /*app.get('/list-all-files', (req, res) => {
   const directoryPath = path.join(__dirname, '../public');
@@ -142,166 +318,6 @@ app.use(cors())
   } else {
       res.status(404).send('File not found');
   }
-});*/
-
-let browser = null;
-
-app.get('/capture', async (req, res) => {
-  const assetname = req.query.name;
-
-  console.log(`app.get capture assetname: ${assetname}`);
-
-  if (!assetname) {
-    return res.status(400).send({ error: 'Missing name parameter' });
-  }
-
-  const html = 'uhhm-capturer.html';
-  const filePath = path.join(__dirname, '../public', html);
-  console.log(`path: ${filePath}`);
-  
-  
-  //const url = "http://localhost:8080/launch-capturer";// + html + '?name=' + assetname;
-  const url = "http://localhost:8080/uhhm-capturer.html";// + html + '?name=' + assetname;
-  console.log(`url: ${url}`);
-
-  //const file = path.join(__dirname, '../public', 'uhhm-capturer.html');
-  //console.log(`path: ${file}`);
-  //const capUrl = new url.URL('file://' + file);
-
-  //capUrl.searchParams.append('name', assetname);
-  //url.searchParams.append('lyrics', '');
-
-  //path.join(__dirname, 'uhhm-capturer.html');
-  //const url = `http://localhost:8080/uhhm-capturer.html?name=${assetname}`;
-
-
-  let execPath;
-  if (process.platform === 'win32') {
-    // Windows
-    execPath = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
-  //} else if (process.platform === 'linux') {
-    // Linux
-  //  execPath = '';
-  } else if (process.platform === 'darwin') {
-    // macOS
-    execPath = '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge';
-  }
-
-  // Playwright junk
-  try {
-    //const browser = await puppeteer.launch({headless: false, executablePath: '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome',});
-    //const page = await browser.newPage();
-    browser = await playwright.chromium.launch( { 
-      args: [
-        "--ipc=host", 
-        "--mute-audio"
-      ], 
-      //executablePath: "/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary",
-      executablePath: execPath,
-      video: 'on', 
-      headless: false, 
-      chromiumSandbox: false
-    } ); 
-
-    const context = await browser.newContext();
-    const page = await context.newPage();
-
-    page.on('pageerror', err => {
-      console.error('Page error: ', err.toString());
-    });
-    
-    page.on('console', msg => {
-      if (msg.type() === 'log') {
-        for (let i = 0; i < msg.args().length; ++i)
-          console.log(`${i}: ${msg.args()[i]}`);
-      }
-      if (msg.type() === 'error') {
-        console.error(msg.text());
-      }
-    });
-
-    await page.goto(url);
-    console.log(`url opened: ${url}`);
-
-    res.status(202).json({
-      message: 'Playwright process launched successfully',
-      assetname: assetname
-    });
-
-    res.send();
-
-    // Assume the download URL will appear in an element with id 'downloadUrl'.
-   /*try {
-      await page.waitForSelector('#downloadUrl'); //, { timeout: 20000 }); // wait
-      //await page.waitForFunction('document.querySelector("#progress").innerText.includes("100")', { timeout: 60000 });
-
-    } catch (error) {
-      // The 'download-link' element didn't appear in time
-      await browser.close();
-      return res.status(500).send({ error: 'The download link did not appear in time' });
-    }*/
-
-    /*const videoUrl = await page.evaluate(() => {
-      // This function runs in the browser context.
-      const linkElement = document.querySelector('#downloadUrl');
-      return linkElement ? linkElement.href : null;
-    });*/
-
-    /*if (videoUrl) {
-      res.send({ videoUrl: videoUrl });
-    } else {
-      res.status(404).send({ error: 'Download URL not found' });
-    }*/
-
-  } catch (error) {
-    // An unexpected error occurred.
-    console.error(error);
-    res.status(500).send({ error: 'Playwright failed' });
-    if (browser) {
-      await browser.close();
-      browser = null;
-    }
-  }
-
-  /*try {
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-    await page.goto(url);
-    const screenshot = await page.screenshot({ encoding: 'base64' });
-    await browser.close();
-
-    res.send({ screenshot: screenshot });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ error: 'Failed to take screenshot' });
-  }*/
-
-  });
-
-  app.get('/kill-capture', (req, res) => {
-    res.status(200).send({ success: 'killing playwright browser' });
-
-    if (browser) {
-        setTimeout(async () => {
-            try {
-                await browser.close();
-                browser = null;
-            } catch (error) {
-                console.error('Error closing browser: ', error);
-            }
-        }, 1000); // delay of 1000ms (1 second)
-    }
-  });
-
-/*app.get('/download/:filename', (req, res) => {
-  const filename = req.params.filename;
-  const filePath = path.join(__dirname, '../output', filename);
-
-  res.download(filePath, (err) => {
-    if (err) {
-      res.status(404).send(`File not found: ${filePath}`);
-    }
-  });
 });*/
 
 startServer();

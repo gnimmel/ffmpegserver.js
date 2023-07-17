@@ -93,21 +93,23 @@ var VideoServer = function(options, startedCallback) {
 
   app.use(express.static(path.join(__dirname, '..', g.baseDir)));
 
-  app.get('/launch-capturer', (req, res) => {
-    let filePath = path.join(__dirname, '..', 'public', 'uhhm-capturer.html');
-    console.log('__dirname: ' + filePath);
-    if (process.pkg) {
-      filePath = path.join(path.dirname(process.execPath), 'public', 'uhhm-capturer.html');
-      console.log('PKG PKG PKG: ' + filePath);
-    }
-    console.log(`app.get filepath: ${filePath}`);
+  const model = require('../public/model');
 
-    if (fs.existsSync(filePath)) {
-        res.sendFile(filePath);
-    } else {
-        res.status(404).send('404 File not found');
+  app.get('/test-get-sketch/', (req, res) => {
+    var id = req.query.id;
+    try {
+      if (model.getAssetData(id)) {
+        if (process.pkg)
+          res.sendFile(path.join(__dirname ,'..', 'public', 'shareable.html'));
+        else
+          res.sendFile(path.join(process.cwd(), 'public', 'shareable.html'));
+      } else {
+          res.status(404).send({ error: 'No data found for this id' });
+      }
+    } catch (error) {
+      console.log("Fetch asset data failed:", error);
     }
-});
+  });
 
   function serverErrorHandler() {
     ++g.port;

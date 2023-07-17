@@ -1,30 +1,64 @@
-import createSketch from './sketch.js';
+//import createSketch from './sketch.js';
+import ExtendedSketch from './ExtendedSketch.js';
 
-const TMP_LYRICS = "to rock a rhyme that's right on time";
-const TMP_VID_PATH = "videos/UHHM_Shareable_Asset_Competitive_3.mp4";
+let lyrics = "to rock a rhyme that's right on time";
+let vidPath = "videos/UHHM_Shareable_Asset_Competitive_3.mp4";
 //const TMP_VID_PATH = "videos/UHHM_Shareable_Asset_Inspired_6.mp4";
-const TMP_COLOR = [112, 255, 178];
+let textColor = [112, 255, 178];
 
 const FPS = 30;
 const CANVAS_WIDTH = 540;
 const CANVAS_HEIGHT = 960;
 const CANVAS_SCALE = 1.0;
 
+let canvasWidth = CANVAS_WIDTH * CANVAS_SCALE;
+let canvasHeight = CANVAS_HEIGHT * CANVAS_SCALE;
+let framerate = FPS;
 
 // Check for url params
-var urlParams = {};
-var url = window.location.href;
+let urlParams = new URLSearchParams(window.location.search);
 
-console.log("Current URL: " + url);
-
-var urlObj = new URL(url);
-var pams = new URLSearchParams(urlObj.search);
-
-// What params have we been passed?
-for (let pair of pams.entries()) 
+if (urlParams.has('id')) 
 {
-  console.log(pair[0] + ', ' + pair[1]);
-  urlParams[pair[0]] = pair[1];
+  let id = urlParams.get('id');
+  console.log(`id is: ${id}`);
+
+  fetchAssetData(id).then(() => {
+    
+    // Create the sketch
+    let mySketch = new ExtendedSketch(framerate, canvasWidth, canvasHeight, lyrics, textColor, vidPath, 15, true, onCaptureComplete);
+    
+    let thep5 = new p5((p) => {
+      p.preload = () => mySketch.p5preload(p);
+      p.setup = () => mySketch.p5setup(p);
+      p.draw = () => mySketch.p5draw(p);
+    }, 'the-sketch');
+  });
+
+} else 
+{
+  console.log("No 'id' parameter in URL.");
+}
+
+async function fetchAssetData(id) {
+  try {
+      let response = await fetch(`http://localhost:4000/assetdata/${id}`);
+
+      if (!response.ok) {
+          throw new Error("HTTP error " + response.status);
+      }
+
+      let json = await response.json();
+
+      console.log(json);
+      
+      vidPath = "videos/" + json.filename;
+      lyrics = json.lyrics;
+      textColor = json.textcolor;
+      console.log(`Filename: ${vidPath}, Lyrics: ${lyrics}, Text color: ${textColor}`);
+  } catch (error) {
+      console.log("Fetch error:", error);
+  }
 }
 
 function onCaptureComplete() {
@@ -45,20 +79,3 @@ function onCaptureComplete() {
     console.error('Fetch error:', error);
   });
 }
-
-let canvasWidth = CANVAS_WIDTH * CANVAS_SCALE;
-let canvasHeight = CANVAS_HEIGHT * CANVAS_SCALE;
-let framerate = FPS;
-
-// Create the flow sketch
-const mySketch = createSketch(
-  framerate, 
-  canvasWidth, 
-  canvasHeight,
-  TMP_LYRICS,
-  TMP_COLOR,
-  TMP_VID_PATH,
-  onCaptureComplete  
-  );
-
-let thep5 = new p5(mySketch, 'the-sketch');
