@@ -55,8 +55,6 @@ class ExtendedSketch extends BaseSketch {
 
             ++this.frameCount;
             this.virtualTime += this.frameDuration;
-            
-            console.log(this.frameCount + " :: "+ this.numFrames);
 
             if (this.frameCount === this.numFrames) {
                 this.capturer.stop();

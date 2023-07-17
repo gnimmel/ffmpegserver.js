@@ -98,10 +98,6 @@ function startServer() {
   args.frameDir = path.join(process.cwd(), args.frameDir);
   var server = new VideoServer(args);
 
-  //app.use('/output', express.static(path.join(__dirname, 'output')));
-  //app.use('/videos', express.static(path.join(__dirname, '/videos')));
-  //app.use(express.static('/videos'));
-
   app.listen(apiPort, () => {
     console.log(`API port: ${apiPort}`);
   });
@@ -130,8 +126,9 @@ app.use(express.static(path.join(__dirname, '..', 'public')));
 let browser = null;
 
 // Get the Sketch
+// http://localhost:4000/get-sketch-by-id?id=123456
 
-app.get('/test-get-sketch/', (req, res) => {
+app.get('/get-sketch-by-id', (req, res) => {
   var id = req.query.id;
   try {
     if (model.getAssetData(id)) {
@@ -277,19 +274,7 @@ app.post('/get-sketch', async (req, res) => {
   
     res.send();
   });
-  
-  app.get('/test-get-sketch/', (req, res) => {
-    var id = req.query.id;
-  
-    if (model.getAssetData(id)) {
-      if (process.pkg)
-        res.sendFile(path.join(__dirname ,'..', 'public', 'shareable.html'));
-      else
-        res.sendFile(path.join(process.cwd(), 'public', 'shareable.html'));
-    } else {
-        res.status(404).send({ error: 'No data found for this id' });
-    }
-  });
+
 /*app.get('/download/:filename', (req, res) => {
   const filename = req.params.filename;
   const filePath = path.join(__dirname, '../output', filename);
