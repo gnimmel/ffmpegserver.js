@@ -24,7 +24,7 @@ class ExtendedSketch extends BaseSketch {
             format: 'ffmpegserver',
             verbose: false,
             framerate: this.fps,
-            name: 'UHHM-FLOWSCHOLAR-shareable',
+            name: id + 'UHHM-FLOWSCHOLAR-shareable',
         });
 
         this.capturer.start();

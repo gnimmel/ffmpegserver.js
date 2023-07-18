@@ -1,0 +1,38 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.container {
+    display: flex;
+    width: 2256px; 
+    height: 1504px; 
+}
+
+.image-container {
+    flex: 0 0 1248px;
+    height: 100%;
+    overflow: hidden;
+}
+
+.image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.iframe-container {
+    flex: 1;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    display: flex;  /* Added */
+    align-items: center;  /* Added */
+}
+
+#content-frame {
+    width: 100%;  /* Modified */
+    height: 100%;  /* Modified */
+}

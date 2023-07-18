@@ -128,21 +128,56 @@ let browser = null;
 // Get the Sketch
 // http://localhost:4000/get-sketch-by-id?id=123456
 
-app.get('/get-sketch-by-id', (req, res) => {
+/*app.get('/get-sketch-by-id', (req, res) => {
   var id = req.query.id;
+
   try {
     if (model.getAssetData(id)) {
       if (process.pkg)
-        res.sendFile(path.join(__dirname ,'..', 'public', 'shareable.html'));
+        res.redirect(`/shareable.html?id=${id}`);
+        //res.sendFile(path.join(__dirname ,'..', 'public', 'shareable.html'));
       else
-        res.sendFile(path.join(process.cwd(), 'public', 'shareable.html'));
+        res.redirect(`/shareable.html?id=${id}`);
+        //res.sendFile(path.join(process.cwd(), 'public', 'shareable.html'));
     } else {
         res.status(404).send({ error: 'No data found for this id' });
     }
   } catch (error) {
     console.log("Fetch asset data failed:", error);
+    res.status(500).send({ error: 'Internal server error' });
+  }
+});*/
+
+const ejs = require('ejs');
+
+app.get('/get-sketch-by-id', (req, res) => {
+  var id = req.query.id;
+
+  try {
+    if (model.getAssetData(id)) {
+      // Read the HTML file
+      fs.readFile(process.pkg ? path.join(__dirname ,'..', 'public', 'shareable.html') : path.join(process.cwd(), 'public', 'shareable.html'), 'utf8', function(err, data) {
+        if (err) {
+          console.log("Read file failed:", err);
+          res.status(500).send({ error: 'Internal server error' });
+          return;
+        }
+
+        // Render the HTML file as an EJS template, passing the id as a parameter
+        var html = ejs.render(data, { id: id });
+
+        // Send the rendered HTML
+        res.send(html);
+      });
+    } else {
+      res.status(404).send({ error: 'No data found for this id' });
+    }
+  } catch (error) {
+    console.log("Fetch asset data failed:", error);
+    res.status(500).send({ error: 'Internal server error' });
   }
 });
+
 
 app.post('/get-sketch', async (req, res) => {
   const { id, emotion, lyrics, doCapture } = req.body;

@@ -54,13 +54,14 @@ let assetDataById = {};
 
 function setAssetData(id, emotion, lyrics) {
     //console.log(Emotion.INSPIRED);
-    console.log(assetArrayByEmotion);
+    console.log("assetArrayByEmotion :: " + assetArrayByEmotion);
+    
     let name;
-    try {
+    if (emotion in assetArrayByEmotion)
         name = getRandomItem(assetArrayByEmotion[emotion]);
-    } catch (err) {
-        console.error('emotion is invalid', err);
-    }
+    else
+        console.error('This is not a valid emotion: ' + emotion);
+    
     try {
         assetDataById[id] = {
             "filename": name,
