@@ -13,7 +13,7 @@ body, html {
     position: relative;
     width: 100vw; 
     height: calc(100vw * 1504 / 2256); /* Maintain aspect ratio */
-    max-height: 100vh; /* Do not exceed viewport height */
+    /* max-height: 100vh; Do not exceed viewport height */
 }
 
 #the-sketch {
