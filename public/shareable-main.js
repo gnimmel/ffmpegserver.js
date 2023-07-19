@@ -63,7 +63,7 @@ async function fetchAssetData(id) {
 
       console.log(json);
       
-      vidPath = "videos/" + json.filename;
+      vidPath = json.filepath;
       lyrics = json.lyrics;
       textColor = json.textcolor;
       console.log(`Filename: ${vidPath}, Lyrics: ${lyrics}, Text color: ${textColor}`);

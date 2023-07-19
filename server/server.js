@@ -150,6 +150,27 @@ let browser = null;
 
 const ejs = require('ejs');
 
+app.post('/add-assetdata', async (req, res) => {
+  const { id, emotion, lyrics, doCapture } = req.body;
+
+  // Validate request body
+  if (!id || !lyrics || !emotion || !doCapture) {
+    return res.status(400).json({
+      message: 'Request body should contain id, lyrics, emotion, and doCapture',
+    });
+  }
+
+  console.log(`Received data - id: ${id}, emotion: ${emotion}, lyrics: ${lyrics}, doCapture: ${doCapture}`);
+  model.setAssetData(id, emotion, lyrics);
+
+  res.status(202).json({
+    message: 'data seeded successfully',
+    id: id
+  });
+
+  res.send();
+});
+
 app.get('/get-sketch-by-id', (req, res) => {
   var id = req.query.id;
 
@@ -178,7 +199,7 @@ app.get('/get-sketch-by-id', (req, res) => {
   }
 });
 
-
+// TODO: clean this up and seperate set data from the playwright junk
 app.post('/get-sketch', async (req, res) => {
   const { id, emotion, lyrics, doCapture } = req.body;
 
@@ -192,10 +213,20 @@ app.post('/get-sketch', async (req, res) => {
   console.log(`Received data - id: ${id}, emotion: ${emotion}, lyrics: ${lyrics}, doCapture: ${doCapture}`);
   model.setAssetData(id, emotion, lyrics);
 
-  if (process.pkg)
-    res.sendFile(path.join(__dirname ,'..', 'public', 'shareable.html'));
-  else
-    res.sendFile(path.join(process.cwd(), 'public', 'shareable.html'));
+  // Read the HTML file
+  fs.readFile(process.pkg ? path.join(__dirname ,'..', 'public', 'shareable.html') : path.join(process.cwd(), 'public', 'shareable.html'), 'utf8', function(err, data) {
+    if (err) {
+      console.log("Read file failed:", err);
+      res.status(500).send({ error: 'Internal server error' });
+      return;
+    }
+
+    // Render the HTML file as an EJS template, passing the id as a parameter
+    var html = ejs.render(data, { id: id });
+
+    // Send the rendered HTML
+    res.send(html);
+  });
 
   if (JSON.parse(doCapture)) 
   {
@@ -287,27 +318,6 @@ app.post('/get-sketch', async (req, res) => {
     } else {
         res.status(404).send({ error: 'No data found for this id' });
     }
-  });
-
-  app.post('/test-add-assetdata', async (req, res) => {
-    const { id, emotion, lyrics, doCapture } = req.body;
-  
-    // Validate request body
-    if (!id || !lyrics || !emotion || !doCapture) {
-      return res.status(400).json({
-        message: 'Request body should contain id, lyrics, emotion, and doCapture',
-      });
-    }
-  
-    console.log(`Received data - id: ${id}, emotion: ${emotion}, lyrics: ${lyrics}, doCapture: ${doCapture}`);
-    model.setAssetData(id, emotion, lyrics);
-  
-    res.status(202).json({
-      message: 'data seeded successfully',
-      id: id
-    });
-  
-    res.send();
   });
 
 /*app.get('/download/:filename', (req, res) => {

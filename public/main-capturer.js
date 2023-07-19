@@ -18,11 +18,11 @@ let framerate = FPS;
 window.onload = async function() 
 {
   // Check for url params
-  //let urlParams = new URLSearchParams(window.location.search);
+  let urlParams = new URLSearchParams(window.location.search);
 
-  //if (urlParams.has('id')) {
-  //    let id = urlParams.get('id');
-  if (id) {
+  if (urlParams.has('id')) {
+      let id = urlParams.get('id');
+  //if (id) {
       // Validate the 'id' parameter
       /*if (isNaN(id)) {
           console.log("Invalid 'id' parameter in URL.");
@@ -36,7 +36,7 @@ window.onload = async function()
           await fetchAssetData(id);
 
           // Create the sketch
-          let mySketch = new BaseSketch(framerate, canvasWidth, canvasHeight, lyrics, textColor, vidPath, 15, true);
+          let mySketch = new ExtendedSketch(framerate, canvasWidth, canvasHeight, lyrics, textColor, vidPath, 15, true, onCaptureComplete, id);
 
           let thep5 = new p5((p) => {
               p.preload = () => mySketch.p5preload(p);
@@ -53,22 +53,23 @@ window.onload = async function()
 
 async function fetchAssetData(id) {
   try {
-      let response = await fetch(`http://localhost:4000/assetdata/${id}`);
+    console.log(`Fetch Asset Data for id: ${id}`);
+    let response = await fetch(`http://localhost:4000/assetdata/${id}`);
 
-      if (!response.ok) {
-          throw new Error("HTTP error " + response.status);
-      }
+    if (!response.ok) {
+        throw new Error("HTTP error " + response.status);
+    }
 
-      let json = await response.json();
+    let json = await response.json();
 
-      console.log(json);
-      
-      vidPath = "videos/" + json.filename;
-      lyrics = json.lyrics;
-      textColor = json.textcolor;
-      console.log(`Filename: ${vidPath}, Lyrics: ${lyrics}, Text color: ${textColor}`);
+    console.log(json);
+    
+    vidPath = json.filepath;
+    lyrics = json.lyrics;
+    textColor = json.textcolor;
+    console.log(`Filename: ${vidPath}, Lyrics: ${lyrics}, Text color: ${textColor}`);
   } catch (error) {
-      console.log("Fetch error:", error);
+    console.log("Fetch error:", error);
   }
 }
 

@@ -2,13 +2,14 @@ import { drawSphere } from './text_animations/sphere/sphere.js';
 import BaseSketch from './BaseSketch.js';
 
 class ExtendedSketch extends BaseSketch {
-    constructor(fps, canvasWidth, canvasHeight, lyrics, textColor, videoPath, DURATION = 15, REQUIRES_GL = true, showVideoLinkFunc = null) {
+    constructor(fps, canvasWidth, canvasHeight, lyrics, textColor, videoPath, DURATION = 15, REQUIRES_GL = true, showVideoLinkFunc = null, id = null) {
         super(fps, canvasWidth, canvasHeight, lyrics, textColor, videoPath, DURATION, REQUIRES_GL);
 
         this.showVideoLinkFunc = showVideoLinkFunc;
         this.capturer = null;
         this.frameCount = 0;
         this.numFrames = fps * DURATION;
+        this.id = id;
 
         this.virtualTime = 0;
         this.virtualFrameRate = fps;
@@ -24,7 +25,7 @@ class ExtendedSketch extends BaseSketch {
             format: 'ffmpegserver',
             verbose: false,
             framerate: this.fps,
-            name: id + 'UHHM-FLOWSCHOLAR-shareable',
+            name: this.id + '-UHHM-FLOWSCHOLAR-shareable',
         });
 
         this.capturer.start();

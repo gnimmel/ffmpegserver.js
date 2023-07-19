@@ -64,7 +64,10 @@ function setAssetData(id, emotion, lyrics) {
     
     try {
         assetDataById[id] = {
-            "filename": name,
+            //"filepath": process.pkg ? path.join(process.execPath, '../path/to/videos', name) : "videos/" + name,
+            //"filepath": process.pkg ? path.join(__dirname ,'..', 'public', 'videos', name) : "videos/" + name,
+            //"filepath": "./videos/" + name,
+            "filepath": path.join("." ,"videos", name),
             "lyrics": lyrics,
             "textcolor": getHexFromFilename(name)
         };
@@ -76,10 +79,14 @@ function setAssetData(id, emotion, lyrics) {
 }
 
 function getAssetData(id) {
-    if (id in assetDataById)
-        return assetDataById[id];
-    else 
-        return null
+    if (id in assetDataById) {
+        let data = assetDataById[id];
+        data.vid
+        return data;
+    } else {
+        return null 
+    }
+
 }
 
 module.exports = { init, getAssetData, setAssetData, getHexFromFilename };

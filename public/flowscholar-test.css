@@ -1,19 +1,21 @@
 body, html {
     margin: 0;
     padding: 0;
-    width: 100%;
     height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .container {
     display: flex;
-    width: 2256px; 
-    height: 1504px; 
+    width: 100vw; /* Use viewport width */
+    height: 100vh; /* Use viewport height */
 }
 
 .image-container {
-    flex: 0 0 1248px;
-    height: 100%;
+    flex: 0 0 50vw; /* Set width to 50% of viewport width */
+    height: 100vh; /* Set height equal to viewport height */
     overflow: hidden;
 }
 
@@ -24,15 +26,12 @@ body, html {
 }
 
 .iframe-container {
-    flex: 1;
-    height: 100%;
-    position: relative;
-    overflow: hidden;
-    display: flex;  /* Added */
-    align-items: center;  /* Added */
+    flex: 1; /* Take up remaining space */
+    height: 100vh; /* Set height equal to viewport height */
 }
 
 #content-frame {
-    width: 100%;  /* Modified */
-    height: 100%;  /* Modified */
+    width: 100%;
+    height: 100%;
+    border: none; /* Remove iframe border */
 }
