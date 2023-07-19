@@ -12,14 +12,17 @@ const Emotions = [
     'nostalgic'
 ];
 
-let serverIp = getHostIP();
+// TODO: READ VIDEO RESOLUTION AND STORE IT HERE
+// TODO: SAME FOR SCALING ????
+
+
 let assetArrayByEmotion = {};
 
 for (let item of Emotions)
     assetArrayByEmotion[item] = [];
 
 function init(directoryPath) {
-    //const directoryPath = './videos';
+
     try {
         let files = fs.readdirSync(directoryPath);
 
@@ -66,10 +69,11 @@ function setAssetData(id, emotion, lyrics) {
     
     try {
         assetDataById[id] = {
-            "filepath": process.pkg ? path.join(process.execPath, '../path/to/videos', name) : path.join("." ,"videos", name),
+            //"filepath": process.pkg ? path.join(process.execPath, '../path/to/videos', name) : path.join("." ,"videos", name),
             //"filepath": process.pkg ? path.join(__dirname ,'..', 'public', 'videos', name) : "videos/" + name,
             //"filepath": "./videos/" + name,
             "filepath": path.join("." ,"videos", name),
+            "file": name,
             "lyrics": lyrics,
             "textcolor": getHexFromFilename(name)
         };
@@ -84,7 +88,6 @@ function setAssetData(id, emotion, lyrics) {
 function getAssetData(id) {
     if (id in assetDataById) {
         let data = assetDataById[id];
-        data.vid
         return data;
     } else {
         return null 
@@ -99,11 +102,11 @@ function getHostIP() {
     for (let interface in networkInterfaces) {
         for (let details of networkInterfaces[interface]) {
             if (details.family === 'IPv4' && !details.internal) {
-                console.log(details.address);
+                console.log("Sever IP: " + details.address);
                 return details.address;
             }
         }
     }
     return null;
 }
-module.exports = { init, getAssetData, setAssetData, getHexFromFilename };
+module.exports = { init, getAssetData, setAssetData, getHexFromFilename, getHostIP };

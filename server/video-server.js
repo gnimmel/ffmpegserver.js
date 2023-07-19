@@ -93,6 +93,7 @@ var VideoServer = function(options, startedCallback) {
 
   app.use(express.static(path.join(__dirname, '..', g.baseDir)));
 
+  /*
   const model = require('../public/model');
 
   app.get('/test-get-sketch/', (req, res) => {
@@ -110,6 +111,7 @@ var VideoServer = function(options, startedCallback) {
       console.log("Fetch asset data failed:", error);
     }
   });
+*/
 
   function serverErrorHandler() {
     ++g.port;

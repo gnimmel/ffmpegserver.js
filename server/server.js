@@ -174,7 +174,7 @@ app.post('/add-asset-data', async (req, res) => {
 
 app.get('/get-sketch-by-id', (req, res) => {
   var id = req.query.id;
-
+  
   try {
     if (model.getAssetData(id)) {
       // Read the HTML file
@@ -186,7 +186,7 @@ app.get('/get-sketch-by-id', (req, res) => {
         }
 
         // Render the HTML file as an EJS template, passing the id as a parameter
-        var html = ejs.render(data, { id: id, serverIp: model.serverIp });
+        var html = ejs.render(data, { id: id, serverIp: model.getHostIP() });
 
         // Send the rendered HTML
         res.send(html);
@@ -313,7 +313,8 @@ app.post('/get-sketch', async (req, res) => {
 
   app.get('/assetdata/:id', (req, res) => {
     const id = req.params.id;
-  
+    //console.log("app.get /assetdata/id:" + id);
+
     if (model.getAssetData(id)) {
         res.json(model.getAssetData(id));
     } else {
@@ -326,14 +327,17 @@ app.post('/get-sketch', async (req, res) => {
   app.get('/videos/:filename', function(req, res) {
     try {
       var filename = req.params.filename;
-      var videoPath = path.resolve(__dirname, 'videos', filename + '.mp4');
-  
+      var videoPath = path.resolve(__dirname, 'videos', filename);
+      
+      console.log("videoPath from get request: " + videoPath);
+
       // Check if file exists before sending
       fs.access(videoPath, fs.constants.F_OK, (err) => {
         if (err) {
           console.log(`File ${videoPath} does not exist`);
           res.status(404).send({ error: 'File not found' });
         } else {
+          console.log("sending video");
           res.sendFile(videoPath);
         }
       });

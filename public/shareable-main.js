@@ -64,10 +64,12 @@ async function fetchAssetData(id) {
 
       console.log(json);
       
-      vidPath = json.filepath;
+      //vidPath = json.filepath;
+      vidPath = `http://${serverIp}:4000/videos/${json.file}`;
+
       lyrics = json.lyrics;
       textColor = json.textcolor;
-      console.log(`Filename: ${vidPath}, Lyrics: ${lyrics}, Text color: ${textColor}`);
+      console.log(`Filepath: ${vidPath}, Lyrics: ${lyrics}, Text color: ${textColor}`);
   } catch (error) {
       console.log("Fetch error:", error);
   }
