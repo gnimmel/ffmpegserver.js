@@ -12,7 +12,7 @@ export function setupSphere(p, font, strText, textColor)
   img.textSize(12);
   img.fill(textColor); // text color
   
-  img.pixelDensity(2);
+  img.pixelDensity(5);
   img.textFont(font);
   //textSize(20);
   img.textLeading(15);
