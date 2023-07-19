@@ -55,6 +55,7 @@ async function fetchAssetData(id) {
   try {
     console.log(`Fetch Asset Data for id: ${id}`);
     let response = await fetch(`http://localhost:4000/assetdata/${id}`);
+    //let response = await fetch(`/assetdata/${id}`);
 
     if (!response.ok) {
         throw new Error("HTTP error " + response.status);
@@ -75,6 +76,7 @@ async function fetchAssetData(id) {
 
 function onCaptureComplete() {
   fetch('http://localhost:4000/kill-capture', {
+  //fetch('/kill-capture', {
         method: 'GET', 
         headers: {
             'Content-Type': 'application/json',

@@ -122,6 +122,7 @@ var app = express();
 app.use(cors())
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '..', 'public')));
+app.use(express.static(path.join(__dirname, '..', 'public', 'videos')));
 
 let browser = null;
 
@@ -150,7 +151,7 @@ let browser = null;
 
 const ejs = require('ejs');
 
-app.post('/add-assetdata', async (req, res) => {
+app.post('/add-asset-data', async (req, res) => {
   const { id, emotion, lyrics, doCapture } = req.body;
 
   // Validate request body
@@ -320,6 +321,28 @@ app.post('/get-sketch', async (req, res) => {
     }
   });
 
+  //process.pkg ? path.join(__dirname ,'..', 'public', 'shareable.html') : path.join(process.cwd(), 'public', 'shareable.html'), 'utf8', function(err, data)
+
+  app.get('/videos/:filename', function(req, res) {
+    try {
+      var filename = req.params.filename;
+      var videoPath = path.resolve(__dirname, 'videos', filename + '.mp4');
+  
+      // Check if file exists before sending
+      fs.access(videoPath, fs.constants.F_OK, (err) => {
+        if (err) {
+          console.log(`File ${videoPath} does not exist`);
+          res.status(404).send({ error: 'File not found' });
+        } else {
+          res.sendFile(videoPath);
+        }
+      });
+    } catch (error) {
+      console.log("An error occurred:", error);
+      res.status(500).send({ error: 'Internal server error' });
+    }
+  });
+
 /*app.get('/download/:filename', (req, res) => {
   const filename = req.params.filename;
   const filePath = path.join(__dirname, '../output', filename);
@@ -339,15 +362,6 @@ app.post('/get-sketch', async (req, res) => {
     } 
     res.send(files);
   });
-});*/
-
-/*app.get('/uhhm-capturer.html', (req, res) => {
-  const filePath = path.join(__dirname, 'public', 'uhhm-capturer.html');
-  if (fs.existsSync(filePath)) {
-      res.sendFile(filePath);
-  } else {
-      res.status(404).send('File not found');
-  }
 });*/
 
 startServer();

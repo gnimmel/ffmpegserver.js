@@ -63,7 +63,7 @@ export function drawSphere(p)
   
   p.noStroke(); 
   p.texture(img);
-  p.rotateY(p.frameCount * -0.01);
+  p.rotateY(p.frameCount * -0.005);
   p.sphere(147);
 
   gl.disable(gl.CULL_FACE);

@@ -6,9 +6,9 @@ let vidPath;// = "videos/UHHM_Shareable_Asset_Competitive_3.mp4";
 //const TMP_VID_PATH = "videos/UHHM_Shareable_Asset_Inspired_6.mp4";
 let textColor;// = [112, 255, 178];
 
-const FPS = 30;
-const CANVAS_WIDTH = 1080;
-const CANVAS_HEIGHT = 1920;
+const FPS = 60;
+const CANVAS_WIDTH = 540;
+const CANVAS_HEIGHT = 960;
 const CANVAS_SCALE = 1.0;
 
 let canvasWidth = CANVAS_WIDTH * CANVAS_SCALE;
@@ -53,7 +53,8 @@ window.onload = async function()
 
 async function fetchAssetData(id) {
   try {
-      let response = await fetch(`http://localhost:4000/assetdata/${id}`);
+      //let response = await fetch(`http://localhost:4000/assetdata/${id}`);
+      let response = await fetch(`/assetdata/${id}`);
 
       if (!response.ok) {
           throw new Error("HTTP error " + response.status);

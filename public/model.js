@@ -3,6 +3,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
 const Emotions = [
     'inspired',
@@ -64,7 +65,7 @@ function setAssetData(id, emotion, lyrics) {
     
     try {
         assetDataById[id] = {
-            //"filepath": process.pkg ? path.join(process.execPath, '../path/to/videos', name) : "videos/" + name,
+            "filepath": process.pkg ? path.join(process.execPath, '../path/to/videos', name) : path.join("." ,"videos", name),
             //"filepath": process.pkg ? path.join(__dirname ,'..', 'public', 'videos', name) : "videos/" + name,
             //"filepath": "./videos/" + name,
             "filepath": path.join("." ,"videos", name),
@@ -76,6 +77,7 @@ function setAssetData(id, emotion, lyrics) {
     }
 
     console.log(assetDataById);
+    getHostIP();
 }
 
 function getAssetData(id) {
@@ -89,4 +91,18 @@ function getAssetData(id) {
 
 }
 
+function getHostIP() {
+    
+    const networkInterfaces = os.networkInterfaces();
+
+    for (let interface in networkInterfaces) {
+        for (let details of networkInterfaces[interface]) {
+            if (details.family === 'IPv4' && !details.internal) {
+                console.log(details.address);
+                return details.address;
+            }
+        }
+    }
+    return null;
+}
 module.exports = { init, getAssetData, setAssetData, getHexFromFilename };
