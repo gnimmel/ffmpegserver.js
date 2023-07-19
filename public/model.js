@@ -12,6 +12,7 @@ const Emotions = [
     'nostalgic'
 ];
 
+let serverIp = getHostIP();
 let assetArrayByEmotion = {};
 
 for (let item of Emotions)
@@ -77,7 +78,7 @@ function setAssetData(id, emotion, lyrics) {
     }
 
     console.log(assetDataById);
-    getHostIP();
+    //getHostIP();
 }
 
 function getAssetData(id) {

@@ -54,7 +54,7 @@ window.onload = async function()
 async function fetchAssetData(id) {
   try {
       //let response = await fetch(`http://localhost:4000/assetdata/${id}`);
-      let response = await fetch(`/assetdata/${id}`);
+      let response = await fetch(`http://${serverIp}:4000/assetdata/${id}`);
 
       if (!response.ok) {
           throw new Error("HTTP error " + response.status);

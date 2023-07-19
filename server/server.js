@@ -186,7 +186,7 @@ app.get('/get-sketch-by-id', (req, res) => {
         }
 
         // Render the HTML file as an EJS template, passing the id as a parameter
-        var html = ejs.render(data, { id: id });
+        var html = ejs.render(data, { id: id, serverIp: model.serverIp });
 
         // Send the rendered HTML
         res.send(html);
