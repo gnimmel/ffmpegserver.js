@@ -60,13 +60,20 @@ class BaseSketch {
         setupSphere(p, this.font, this.lyrics, this.textColor);
 
         this.theCanvas = document.getElementById('defaultCanvas0');
+
+        p.textFont(this.font);
     }
 
     p5draw(p) {
         if (!this.bVideoReady) return;
-
+        p.clear();
+        
         p.image(this.video, this.w_gloffset, this.h_gloffset, p.width, p.height);
         drawSphere(p);
+
+        p.fill(0);
+        p.textSize(20);
+        p.text(`FPS: ${p.nf(p.frameRate(), 2, 2)}`, -this.canvasWidth/2, -400);
     }
 }
 

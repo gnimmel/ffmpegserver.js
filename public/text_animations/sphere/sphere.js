@@ -12,7 +12,7 @@ export function setupSphere(p, font, strText, textColor)
   img.textSize(12);
   img.fill(textColor); // text color
   
-  img.pixelDensity(2);
+  img.pixelDensity(10);
   img.textFont(font);
   //textSize(20);
   img.textLeading(15);
@@ -63,7 +63,10 @@ export function drawSphere(p)
   
   p.noStroke(); 
   p.texture(img);
-  p.rotateY(p.frameCount * -0.005);
+  //p.rotateY(p.frameCount * -0.005);
+  //p.rotateY(-0.005 * p.deltaTime);
+  p.rotateY(p.millis() * -0.0005);
+  //console.log("p.deltaTime: " + p.deltaTime);
   p.sphere(147);
 
   gl.disable(gl.CULL_FACE);
