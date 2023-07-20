@@ -17,6 +17,11 @@ let framerate = FPS;
 
 window.onload = async function() 
 {
+  let screenWidth = window.screen.width;
+  canvasWidth = parseInt(screenWidth / 2);
+  canvasHeight = parseInt(canvasWidth * (16 / 9));
+  console.log("Resolution: " + canvasWidth + "x" + canvasHeight);
+
   // Check for url params
   //let urlParams = new URLSearchParams(window.location.search);
 
