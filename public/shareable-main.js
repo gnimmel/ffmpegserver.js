@@ -1,5 +1,5 @@
 //import createSketch from './sketch.js';
-import BaseSketch from './BaseSketch.js';
+import BaseSketch from '/BaseSketch.js';
 
 let lyrics;// = "to rock a rhyme that's right on time";
 let vidPath;// = "videos/UHHM_Shareable_Asset_Competitive_3.mp4";

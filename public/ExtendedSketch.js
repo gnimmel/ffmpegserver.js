@@ -1,5 +1,5 @@
-import { drawSphere } from './text_animations/sphere/sphere.js';
-import BaseSketch from './BaseSketch.js';
+import { drawSphere } from '/text_animations/sphere/sphere.js';
+import BaseSketch from '/BaseSketch.js';
 
 class ExtendedSketch extends BaseSketch {
     constructor(fps, canvasWidth, canvasHeight, lyrics, textColor, videoPath, DURATION = 15, REQUIRES_GL = true, showVideoLinkFunc = null, id = null) {

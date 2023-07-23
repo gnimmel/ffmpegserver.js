@@ -65,7 +65,7 @@ export function drawSphere(p)
   p.texture(img);
   //p.rotateY(p.frameCount * -0.005);
   //p.rotateY(-0.005 * p.deltaTime);
-  p.rotateY(p.millis() * -0.0005);
+  p.rotateY(p.millis() * -0.00025);
   //console.log("p.deltaTime: " + p.deltaTime);
   p.sphere(147);
 

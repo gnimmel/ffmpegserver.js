@@ -1,4 +1,4 @@
-import { setupSphere, drawSphere } from './text_animations/sphere/sphere.js';
+import { setupSphere, drawSphere } from '/text_animations/sphere/sphere.js';
 
 class BaseSketch {
     constructor(fps, canvasWidth, canvasHeight, lyrics, textColor, videoPath, DURATION = 15, REQUIRES_GL = true) {
@@ -67,7 +67,7 @@ class BaseSketch {
     p5draw(p) {
         if (!this.bVideoReady) return;
         p.clear();
-        
+
         p.image(this.video, this.w_gloffset, this.h_gloffset, p.width, p.height);
         drawSphere(p);
 
