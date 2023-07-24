@@ -3,16 +3,15 @@ import BaseSketch from '/BaseSketch.js';
 
 let lyrics;// = "to rock a rhyme that's right on time";
 let vidPath;// = "videos/UHHM_Shareable_Asset_Competitive_3.mp4";
-//const TMP_VID_PATH = "videos/UHHM_Shareable_Asset_Inspired_6.mp4";
 let textColor;// = [112, 255, 178];
 
 const FPS = 60;
-const CANVAS_WIDTH = 1080;
-const CANVAS_HEIGHT = 1920;
-const CANVAS_SCALE = 1.0;
+//const CANVAS_WIDTH = 1080;
+//const CANVAS_HEIGHT = 1920;
+//const CANVAS_SCALE = 1.0;
 
-let canvasWidth = CANVAS_WIDTH * CANVAS_SCALE;
-let canvasHeight = CANVAS_HEIGHT * CANVAS_SCALE;
+let canvasWidth;// = CANVAS_WIDTH * CANVAS_SCALE;
+let canvasHeight;// = CANVAS_HEIGHT * CANVAS_SCALE;
 let framerate = FPS;
 
 window.onload = async function() 
@@ -22,18 +21,7 @@ window.onload = async function()
   canvasHeight = parseInt(canvasWidth * (16 / 9));
   console.log("Resolution: " + canvasWidth + "x" + canvasHeight);
 
-  // Check for url params
-  //let urlParams = new URLSearchParams(window.location.search);
-
   if (id) {
-      //let id = urlParams.get('id');
-
-      // Validate the 'id' parameter
-      /*if (isNaN(id)) {
-          console.log("Invalid 'id' parameter in URL.");
-          return;
-      }*/
-
       console.log(`id is: ${id}`);
 
       try {
@@ -69,7 +57,6 @@ async function fetchAssetData(id) {
 
       console.log(json);
       
-      //vidPath = json.filepath;
       vidPath = `http://${serverIp}:4000/videos/${json.file}`;
 
       lyrics = json.lyrics;
