@@ -152,7 +152,20 @@ let browser = null;
 const ejs = require('ejs');
 
 app.post('/add-asset-data', async (req, res) => {
-  const { id, emotion, lyrics, doCapture } = req.body;
+  const { id, emotion, lyrics } = req.body;
+
+  // Validate request body
+  if (!id || !lyrics || !emotion) {
+    return res.status(400).json({
+      message: 'Request body should contain id, lyrics, emotion',
+    });
+  }
+
+  console.log(`Received data - id: ${id}, emotion: ${emotion}, lyrics: ${lyrics}}`);
+  model.setAssetData(id, emotion, lyrics);
+
+  // WITH CAPTURE
+  /*const { id, emotion, lyrics, doCapture } = req.body;
 
   // Validate request body
   if (!id || !lyrics || !emotion || !doCapture) {
@@ -162,7 +175,7 @@ app.post('/add-asset-data', async (req, res) => {
   }
 
   console.log(`Received data - id: ${id}, emotion: ${emotion}, lyrics: ${lyrics}, doCapture: ${doCapture}`);
-  model.setAssetData(id, emotion, lyrics);
+  model.setAssetData(id, emotion, lyrics);*/
 
   res.status(202).json({
     message: 'data seeded successfully',
@@ -202,7 +215,20 @@ app.get('/get-sketch-by-id', (req, res) => {
 
 // TODO: clean this up and seperate set data from the playwright junk
 app.post('/get-sketch', async (req, res) => {
-  const { id, emotion, lyrics, doCapture } = req.body;
+  const { id, emotion, lyrics } = req.body;
+
+  // Validate request body
+  if (!id || !lyrics || !emotion) {
+    return res.status(400).json({
+      message: 'Request body should contain id, lyrics, emotion',
+    });
+  }
+
+  console.log(`Received data - id: ${id}, emotion: ${emotion}, lyrics: ${lyrics}}`);
+  model.setAssetData(id, emotion, lyrics);
+
+  // WITH CAPTURE
+  /*const { id, emotion, lyrics, doCapture } = req.body;
 
   // Validate request body
   if (!id || !lyrics || !emotion || !doCapture) {
@@ -212,7 +238,7 @@ app.post('/get-sketch', async (req, res) => {
   }
 
   console.log(`Received data - id: ${id}, emotion: ${emotion}, lyrics: ${lyrics}, doCapture: ${doCapture}`);
-  model.setAssetData(id, emotion, lyrics);
+  model.setAssetData(id, emotion, lyrics);*/
 
   // Read the HTML file
   fs.readFile(process.pkg ? path.join(__dirname ,'..', 'public', 'shareable.html') : path.join(process.cwd(), 'public', 'shareable.html'), 'utf8', function(err, data) {
@@ -229,7 +255,9 @@ app.post('/get-sketch', async (req, res) => {
     res.send(html);
   });
 
-  if (JSON.parse(doCapture)) 
+  // CAPTURE DISABLED
+  //if (JSON.parse(doCapture))
+  if (false) 
   {
     // Construct the playwright url
     const url = "http://localhost:8080/uhhm-capturer.html?id=" + id;
