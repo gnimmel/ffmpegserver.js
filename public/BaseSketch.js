@@ -1,4 +1,8 @@
-import { setupSphere, drawSphere } from '/text_animations/sphere/sphere.js';
+//import { setupSphere, drawSphere } from '/text_animations/sphere/sphere.js';
+import SphereAnimation from '/text_animations/SphereAnimation.js';
+import KaraokeAnimation from '/text_animations/KaraokeAnimation.js';
+//import SlideAnimation from '/text_animations/SlideAnimation.js';
+import JiggleDisplaceAnimation from '/text_animations/JiggleDisplaceAnimation.js';
 
 class BaseSketch {
     constructor(fps, canvasWidth, canvasHeight, lyrics, textColor, videoPath, DURATION = 15, REQUIRES_GL = true) {
@@ -17,7 +21,7 @@ class BaseSketch {
         this.intPixDensity = 2;
         this.frameCount = 0;
         this.numFrames = this.fps * this.DURATION;
-
+        this.textAnimation;
     }
     
     p5preload(p) {
@@ -57,7 +61,13 @@ class BaseSketch {
         this.video.elt.setAttribute('loop', true);
         this.video.elt.setAttribute('muted', true);
 
-        setupSphere(p, this.font, this.lyrics, this.textColor);
+
+        //this.textAnimation = new SphereAnimation(p, this.font, this.lyrics, this.textColor);
+        //this.textAnimation = new KaraokeAnimation(p, this.font, this.lyrics, this.textColor);
+        //this.textAnimation = new SlideAnimation(p, this.font, this.lyrics, this.textColor);
+        this.textAnimation = new JiggleDisplaceAnimation(p, this.font, this.lyrics, this.textColor);
+        this.textAnimation.setup();
+        //setupSphere(p, this.font, this.lyrics, this.textColor);
 
         this.theCanvas = document.getElementById('defaultCanvas0');
 
@@ -69,11 +79,11 @@ class BaseSketch {
         p.clear();
 
         p.image(this.video, this.w_gloffset, this.h_gloffset, p.width, p.height);
-        drawSphere(p);
+        this.textAnimation.draw();
 
-        p.fill(0);
+        /*p.fill(0);
         p.textSize(20);
-        p.text(`FPS: ${p.nf(p.frameRate(), 2, 2)}`, -this.canvasWidth/2, -400);
+        p.text(`FPS: ${p.nf(p.frameRate(), 2, 2)}`, -this.canvasWidth/2, -400);*/
     }
 }
 

@@ -1,4 +1,4 @@
-import { drawSphere } from '/text_animations/sphere/sphere.js';
+//import { drawSphere } from '/text_animations/sphere/sphere.js';
 import BaseSketch from '/BaseSketch.js';
 
 class ExtendedSketch extends BaseSketch {
@@ -48,7 +48,7 @@ class ExtendedSketch extends BaseSketch {
 
         this.video.time(this.virtualTime);
         p.image(this.video, this.w_gloffset, this.h_gloffset, p.width, p.height);
-        drawSphere(p);
+        this.textAnimation.draw();
 
         if (this.capturer) {
             if (this.video.time() > 0)
