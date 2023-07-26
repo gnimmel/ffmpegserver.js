@@ -2,16 +2,26 @@ import BaseAnimation from '/text_animations/BaseAnimation.js';
 
 class SphereAnimation extends BaseAnimation {
   constructor(p, font, arrLyrics, textColor) {
-    super(p);
-    this.font = font;
+    super(p, font, arrLyrics, textColor);
+    //this.font = font;
     this.arrLyrics = arrLyrics;
-    this.textColor = textColor;
+    //this.textColor = textColor;
     this.img = undefined;
+    this.fontSize = 12;
+    this.leading = 15;
+    this.texW = 500;
+    this.texH = 300;
   }
 
   setup() {
+    super.setup();
+    this.fontSize = parseInt(this.p.width / (this.baseW / this.fontSize));
+    this.leading = parseInt(this.p.width / (this.baseW / this.leading));
+    this.texW = parseInt(this.p.width / (this.baseW / this.texW));
+    this.texH = parseInt(this.p.width / (this.baseW / this.texH));
+
     this.p.perspective(this.p.PI / 3.0, this.p.width / this.p.height, 0.1, 500);
-    this.img = this.p.createGraphics(500, 300);
+    this.img = this.p.createGraphics(this.texW, this.texH);
     this.img.pixelDensity(10);
     this.img.textFont(this.font);
     this.img.noStroke();
@@ -19,20 +29,18 @@ class SphereAnimation extends BaseAnimation {
 
     let xShift = 0.33;
     for (let i = 0; i < 3; i++) {
-      let fontSize = 12;
-      let leading = 15;
-      this.img.textSize(fontSize);
-      this.img.textLeading(leading);
+      this.img.textSize(this.fontSize);
+      this.img.textLeading(this.leading);
       this.img.fill(this.textColor);
 
       let {lines, numLines} = this.splitIntoLines(this.arrLyrics[i].join(' '), this.img.width*0.25);
-      let totalTextHeight = numLines * leading;
-      while (totalTextHeight > this.img.height && fontSize > 1 && leading > 1) {
-        fontSize -= 0.5;
-        leading -= 0.5;
-        this.img.textSize(fontSize);
-        this.img.textLeading(leading);
-        totalTextHeight = numLines * leading;
+      let totalTextHeight = numLines * this.leading;
+      while (totalTextHeight > this.img.height && this.fontSize > 1 && this.leading > 1) {
+        this.fontSize -= 0.5;
+        this.leading -= 0.5;
+        this.img.textSize(this.fontSize);
+        this.img.textLeading(this.leading);
+        totalTextHeight = numLines * this.leading;
       }
 
       let yStart = (this.img.height - totalTextHeight) / 2;
@@ -43,6 +51,8 @@ class SphereAnimation extends BaseAnimation {
   }
 
   draw() {
+    super.draw();
+
     this.p.push();
     this.p.camera(500, 0, 0, 0, 0, 0, 0, 1, 0);
 

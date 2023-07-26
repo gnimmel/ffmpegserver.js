@@ -173,7 +173,7 @@ void main() {
   vec2 toCenter = vec2(0.5) - vTexCoord;
 
   // Calculate the displacement amount.
-  float displacement = length(toCenter) * 4.9;
+  float displacement = length(toCenter) * 7.1;
 
   // Add a jiggle motion.
   vec2 jiggle;
@@ -197,23 +197,34 @@ void main() {
 }
 `;
 
-let x, y, aspectRatio, video;
+let x, y, aspectRatio, video, font;
+
+function preload() {
+  font = loadFont("/public/fonts/PPMori-Regular.otf");
+}
 
 function setup() {
+  textureMode(NORMAL);
+  
   video = createVideo(['/public/videos/36_Competitive_FF4D2F_Particles_Sphere.mp4']);
   video.volume(0);  
   video.loop();
   video.hide();
 
   createCanvas(1080*0.8, 1920*0.8, WEBGL);
-  graphics = createGraphics(width, width);
+  graphics = createGraphics(width, height, WEBGL);
+  graphics.textFont(font);
+  graphics.textSize(40);
+  graphics.textAlign(CENTER, CENTER);
+  graphics.noStroke();
+
   shaderProgram = createShader(vertexShader, fragmentShaderGood_random);
   //shaderProgram = createShader(vertexShader, fragmentShaderGood_v2);
   
   shader(shaderProgram);
   noStroke();
-  x = graphics.width / 2;
-  y = graphics.height / 2;
+  x = graphics.width * 0.3;
+  y = graphics.height * 0.3;
   aspectRatio = width / height;
 }
 
@@ -224,9 +235,11 @@ function draw() {
   graphics.clear(0, 0, 0, 0);
   //clearWithTransparency(graphics);
   //blendMode(OVERLAY);
-  graphics.textSize(40);
-  graphics.textAlign(CENTER, CENTER);
+  //graphics.textSize(40);
+  //graphics.textAlign(CENTER, CENTER);
   graphics.fill(255,0,0);
+  graphics.noStroke();
+
   //graphics.clear(0, 0, 0, 0);
   graphics.text('Hello, world!\nlets eat tacos', x, y);
   
@@ -238,6 +251,10 @@ function draw() {
   shaderProgram.setUniform('uTexture', graphics);
   shaderProgram.setUniform('uTime', millis() / 1000.0);
 
+  //texture(graphics);
+  //plane(graphics.width, graphics.height);
+
+  //image(graphics, -graphics.width/2, -graphics.height/2);
   beginShape(TRIANGLES);
   vertex(-1, -aspectRatio, 0, 0, 1);
   vertex(1, -aspectRatio, 0, 1, 1);

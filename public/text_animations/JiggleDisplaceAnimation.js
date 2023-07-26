@@ -1,9 +1,62 @@
 import BaseAnimation from '/text_animations/BaseAnimation.js';
 
 class JiggleDisplaceAnimation extends BaseAnimation {
+  
+  // GLSL programs
+  vertexShader = `
+  attribute vec3 aPosition;
+  attribute vec2 aTexCoord;
+
+  varying vec2 vTexCoord;
+
+  void main() {
+    vTexCoord = aTexCoord;
+    gl_Position = vec4(aPosition, 1.0);
+  }
+  `;
+
+  fragmentShaderGood_random = `
+  precision highp float;
+
+  uniform sampler2D uTexture;
+  uniform float uTime;
+  //uniform vec2 uResolution;
+
+  varying vec2 vTexCoord;
+
+  void main() {
+    // Calculate the vector from the current pixel to the center of the image.
+    vec2 toCenter = vec2(0.5) - vTexCoord;
+
+    // Calculate the displacement amount.
+    float displacement = length(toCenter) * 4.9;
+
+    // Add a jiggle motion.
+    vec2 jiggle;
+    jiggle.x = sin(uTime * 10.0 + vTexCoord.y * 3.1415) * 0.06;
+    jiggle.y = cos(uTime * 8.0 + vTexCoord.x * 3.1415) * 0.06;
+    displacement += length(jiggle);
+
+    // Add the displacement to the original texture coordinate.
+    // Squaring the length for a concave magnification effect.
+    vec2 distortedTexCoord = vTexCoord + displacement * toCenter * length(toCenter);
+
+    // Read the original texture with the displaced texture coordinate.
+    vec4 color = texture2D(uTexture, distortedTexCoord);
+    
+    // If the alpha value is less than a small threshold, discard the fragment.
+    if (color.a < 0.4) discard;
+    
+
+    // Use the alpha channel of the color to control its transparency
+    gl_FragColor = vec4(color.rgb, color.a);
+  }
+  `;
+
   constructor(p, font, arrLyrics, textColor) {
-    super(p);
-    this.sentences = arrLyrics.flat();
+    super(p, font, arrLyrics, textColor);
+
+    //this.sentences = arrLyrics.flat();
     this.currentSentenceIndex = 0;
     this.currentWordIndex = 0;
     this.timePerWord = 200;
@@ -12,8 +65,8 @@ class JiggleDisplaceAnimation extends BaseAnimation {
     this.maxLineWidth;
     this.fontSize = 48;
     this.lineHeight = 50;
-    this.color = textColor;
-    this.font = font;
+    //this.textColor = textColor;
+    //this.font = font;
     this.startTime = null;
     this.nextSentenceTime = null;
 
@@ -23,6 +76,10 @@ class JiggleDisplaceAnimation extends BaseAnimation {
   }
 
   setup() {
+    super.setup();
+    this.fontSize = parseInt(this.p.width / (this.baseW / this.fontSize));
+    this.lineHeight = parseInt(this.p.width / (this.baseW / this.lineHeight));
+
     this.maxLineWidth = this.p.width * 0.4;
     this.startTime = this.p.millis();
     this.nextSentenceTime = this.sentences[0].split(" ").length * this.timePerWord + this.timePerSentence;
@@ -32,20 +89,21 @@ class JiggleDisplaceAnimation extends BaseAnimation {
     this.p.textAlign(this.p.LEFT, this.p.CENTER);
     this.p.noStroke();
 
-    this.graphics = this.p.createGraphics(this.p.width, this.p.width);
+    this.graphics = this.p.createGraphics(this.p.width, this.p.width, this.p.WEBGL);
     this.graphics.textFont(this.font);
     this.graphics.textSize(this.fontSize);
     this.graphics.textAlign(this.p.LEFT, this.p.CENTER);
     this.graphics.noStroke();
 
-    this.shaderProgram = this.p.createShader(this.vertexShader, this.fragmentShaderGood_random);
+    //this.shaderProgram = this.p.createShader(this.vertexShader, this.fragmentShaderGood_random);
     //this.p.shader(this.shaderProgram);
-    this.p.shader(this.shaderProgram);
     
     this.aspectRatio = this.p.width / this.p.height;
   }
 
   draw() {
+    super.draw();
+
     let elapsed = this.p.millis() - this.startTime;
 
     if (elapsed >= this.nextWordTime) {
@@ -98,6 +156,10 @@ class JiggleDisplaceAnimation extends BaseAnimation {
         lines.push(currentLine.join(" "));
       }
 
+      this.shaderProgram = this.p.createShader(this.vertexShader, this.fragmentShaderGood_random);
+      this.p.shader(this.shaderProgram);
+      this.graphics.clear(0, 0, 0, 0);
+      
       let wordCount = 0;
       for (let i = 0; i < lines.length; i++) {
         let line = lines[i];
@@ -109,30 +171,33 @@ class JiggleDisplaceAnimation extends BaseAnimation {
 
         for (let j = 0; j < lineWords.length; j++) {
           if (wordCount < this.currentWordIndex) {
-            if (true) 
+            if (false) 
             {
-              this.p.fill(this.color);
+              this.p.fill(this.textColor);
               this.p.noStroke();
               this.p.text(lineWords[j], lineX, lineY);
             } else 
             {
-              this.graphics.clear(0, 0, 0, 0);
-              this.graphics.fill(this.color);
-              this.graphics.text(lineWords[0], lineX, lineY);
+              
+              this.graphics.fill(this.textColor);
+              this.graphics.text(lineWords[j], lineX, lineY);
 
               //this.p.image(this.graphics, -this.p.width/2, -this.p.height/2);
               
               this.shaderProgram.setUniform('uTexture', this.graphics);
               this.shaderProgram.setUniform('uTime', this.p.millis() / 1000.0);
-
-              this.p.beginShape(this.p.TRIANGLES);
+              
+              this.p.image(this.graphics, -this.graphics.width/2, -this.graphics.height/2);
+                
+              /*this.p.beginShape(this.p.TRIANGLES);
               this.p.vertex(-1, -this.aspectRatio, 0, 0, 1);
               this.p.vertex(1, -this.aspectRatio, 0, 1, 1);
               this.p.vertex(1, this.aspectRatio, 0, 1, 0);
               this.p.vertex(1, this.aspectRatio, 0, 1, 0);
               this.p.vertex(-1, this.aspectRatio, 0, 0, 0);
               this.p.vertex(-1, -this.aspectRatio, 0, 0, 1);
-              this.p.endShape();
+              this.p.endShape();*/
+              
             }
           }
           lineX += this.p.textWidth(lineWords[j] + " ");
@@ -142,77 +207,6 @@ class JiggleDisplaceAnimation extends BaseAnimation {
       
     }
   }
-
-  drawWithDisplacement(str, x, y) {
-    this.graphics.clear(0, 0, 0, 0);
-    this.graphics.fill(this.color);
-    this.graphics.text(lineWords[j], lineX, lineY);
-    
-    this.shaderProgram.setUniform('uTexture', this.graphics);
-    this.shaderProgram.setUniform('uTime', this.p.millis() / 1000.0);
-
-    this.p.beginShape(this.p.TRIANGLES);
-    this.p.vertex(-1, -this.aspectRatio, 0, 0, 1);
-    this.p.vertex(1, -this.aspectRatio, 0, 1, 1);
-    this.p.vertex(1, this.aspectRatio, 0, 1, 0);
-    this.p.vertex(1, this.aspectRatio, 0, 1, 0);
-    this.p.vertex(-1, this.aspectRatio, 0, 0, 0);
-    this.p.vertex(-1, -this.aspectRatio, 0, 0, 1);
-    this.p.endShape();
-  }
-
-  // GLSL programs
-  // GLSL programs
-  vertexShader = `
-  attribute vec3 aPosition;
-  attribute vec2 aTexCoord;
-
-  varying vec2 vTexCoord;
-
-  void main() {
-    vTexCoord = aTexCoord;
-    gl_Position = vec4(aPosition, 1.0);
-  }
-  `;
-
-  fragmentShaderGood_random = `
-  precision highp float;
-
-  uniform sampler2D uTexture;
-  uniform float uTime;
-  uniform vec2 uResolution;
-
-  varying vec2 vTexCoord;
-
-  void main() {
-    // Calculate the vector from the current pixel to the center of the image.
-    vec2 toCenter = vec2(0.5) - vTexCoord;
-
-    // Calculate the displacement amount.
-    float displacement = length(toCenter) * 4.9;
-
-    // Add a jiggle motion.
-    vec2 jiggle;
-    jiggle.x = sin(uTime * 10.0 + vTexCoord.y * 3.1415) * 0.06;
-    jiggle.y = cos(uTime * 8.0 + vTexCoord.x * 3.1415) * 0.06;
-    displacement += length(jiggle);
-
-    // Add the displacement to the original texture coordinate.
-    // Squaring the length for a concave magnification effect.
-    vec2 distortedTexCoord = vTexCoord + displacement * toCenter * length(toCenter);
-
-    // Read the original texture with the displaced texture coordinate.
-    vec4 color = texture2D(uTexture, distortedTexCoord);
-    
-    // If the alpha value is less than a small threshold, discard the fragment.
-    if (color.a < 0.4) discard;
-    if (color.r < 0.3) discard;
-
-    // Use the alpha channel of the color to control its transparency
-    gl_FragColor = vec4(color.rgb, color.a);
-  }
-  `;
-
 }
 
 

@@ -171,7 +171,7 @@ void main() {
   vec2 toCenter = vec2(0.5) - vTexCoord;
 
   // Calculate the displacement amount.
-  float displacement = length(toCenter) * 4.0;
+  float displacement = length(toCenter) * 1.5;
 
   // Add a jiggle motion.
   vec2 jiggle;
@@ -208,7 +208,7 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(1080*0.65, 1920*0.65, WEBGL);
+  createCanvas(1080, 1920, WEBGL);
   
   graphics = createGraphics(width, width, WEBGL);  // Create a 2D graphics for text
   //graphics.textFont(myFont);  // Set the font
@@ -240,10 +240,10 @@ function draw() {
 
   //graphics.background(0, 0, 0, 0);  // Ensure the background is transparent
   graphicsText2D.clear();
-  graphicsText2D.fill(255,0,0);
-  graphicsText2D.textSize(40);
+  graphicsText2D.fill("#FF4D2F");
+  graphicsText2D.textSize(67);
   graphicsText2D.textAlign(CENTER, CENTER);
-  graphicsText2D.text('Hello, world!\nlets eat tacos', x, y);
+  graphicsText2D.text('Hello, world!\nLets eat tacos', x, y);
   
   graphics.clear();
   graphics.image(graphicsText2D, -graphicsText2D.width/2, -graphicsText2D.height/2);

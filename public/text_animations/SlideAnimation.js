@@ -2,29 +2,36 @@ import BaseAnimation from '/text_animations/BaseAnimation.js';
 
 class SlideAnimation extends BaseAnimation {
   constructor(p, font, arrLyrics, textColor) {
-    super(p);
-    this.font = font;
-    this.sentences = arrLyrics.flat();
+    super(p, font, arrLyrics, textColor);
+
+    //this.font = font;
+    //this.sentences = arrLyrics.flat();
     this.currentSentence = 0;
     this.animatingIn = false; 
     this.animatingOut = false; 
     this.animationStartTime = 0;
     this.baseTimePerLine = 700; 
     this.timeIncreasePerLineIn = 50; 
-    this.timeIncreasePerLineOut = 25; 
+    this.timeIncreasePerLineOut = 38; 
     this.timeBetweenSentences = 1500; 
     this.delayStartTime = 0;
     this.lines = [];
     this.fontSize = 94;
     this.leading = 85;
-    this.textColor = textColor;
-    this.textBoxWidth = this.p.width * 0.7;
+    //this.textColor = textColor;
+    this.textBoxWidth;// = this.p.width * 0.7;
     this.textX = 0;//this.p.width / 2;
-    this.textY = this.leading;//this.p.height / 2;
+    this.textY;// = this.leading;//this.p.height / 2;
     this.p.textFont(this.font);
   }
 
   setup() {
+    super.setup();
+    this.fontSize = parseInt(this.p.width / (this.baseW / this.fontSize));
+    this.leading = parseInt(this.p.width / (this.baseW / this.leading));
+    this.textBoxWidth = this.p.width * 0.7;
+    this.textY = this.leading;
+    
     this.p.textSize(this.fontSize);
     this.p.textLeading(this.leading);
     this.lines = this.splitIntoLines(this.sentences[this.currentSentence], this.textBoxWidth);
@@ -33,6 +40,8 @@ class SlideAnimation extends BaseAnimation {
   }
 
   draw() {
+    super.draw();
+
     this.p.textAlign(this.p.CENTER);
     let boxHeight = this.lines.length * this.leading;
     let boxTop = this.textY - boxHeight / 2;

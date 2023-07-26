@@ -1,7 +1,7 @@
 //import { setupSphere, drawSphere } from '/text_animations/sphere/sphere.js';
 import SphereAnimation from '/text_animations/SphereAnimation.js';
 import KaraokeAnimation from '/text_animations/KaraokeAnimation.js';
-//import SlideAnimation from '/text_animations/SlideAnimation.js';
+import SlideAnimation from '/text_animations/SlideAnimation.js';
 import JiggleDisplaceAnimation from '/text_animations/JiggleDisplaceAnimation.js';
 
 class BaseSketch {
@@ -23,6 +23,7 @@ class BaseSketch {
         this.numFrames = this.fps * this.DURATION;
 
         this.textAnimation;
+        this.videoGraphics;
     }
     
     p5preload(p) {
@@ -63,7 +64,9 @@ class BaseSketch {
         this.video.elt.setAttribute('loop', true);
         this.video.elt.setAttribute('muted', true);
 
-        p.textFont(this.font);
+        p.textFont(this.font);  
+
+        this.videoGraphics = p.createGraphics(p.width, p.height);//, p.WEBGL);
 
         //this.textAnimation = new SphereAnimation(p, this.font, this.lyrics, this.textColor);
         //this.textAnimation = new KaraokeAnimation(p, this.font, this.lyrics, this.textColor);
@@ -72,15 +75,19 @@ class BaseSketch {
         this.textAnimation.setup();
         //setupSphere(p, this.font, this.lyrics, this.textColor);
 
-        this.theCanvas = document.getElementById('defaultCanvas0');
+        //this.theCanvas = document.getElementById('defaultCanvas0');
     }
 
     p5draw(p) {
         if (!this.bVideoReady) return;
-        p.clear(0,0,0,0);
+        //p.clear(0,0,0,0);
 
-        p.image(this.video, this.w_gloffset, this.h_gloffset, p.width, p.height);
-        //this.textAnimation.draw();
+        //p.image(this.video, this.w_gloffset, this.h_gloffset, p.width, p.height);
+        p.resetShader();
+        this.videoGraphics.image(this.video, 0, 0, p.width, p.height);
+        p.image(this.videoGraphics, this.w_gloffset, this.h_gloffset);
+
+        this.textAnimation.draw();
 
         /*p.fill(0);
         p.textSize(20);

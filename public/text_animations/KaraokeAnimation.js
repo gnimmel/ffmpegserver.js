@@ -2,8 +2,9 @@ import BaseAnimation from '/text_animations/BaseAnimation.js';
 
 class KaraokeAnimation extends BaseAnimation {
   constructor(p, font, arrLyrics, textColor) {
-    super(p);
-    this.sentences = arrLyrics.flat();
+    super(p, font, arrLyrics, textColor);
+
+    //this.sentences = arrLyrics.flat();
     this.currentSentenceIndex = 0;
     this.currentWordIndex = 0;
     this.timePerWord = 200;
@@ -12,13 +13,17 @@ class KaraokeAnimation extends BaseAnimation {
     this.maxLineWidth;
     this.fontSize = 85;
     this.lineHeight = 94;
-    this.color = textColor;
-    this.font = font;
+    //this.textColor = textColor;
+    //this.font = font;
     this.startTime = null;
     this.nextSentenceTime = null;
   }
 
   setup() {
+    super.setup();
+    this.fontSize = parseInt(this.p.width / (this.baseW / this.fontSize));
+    this.lineHeight = parseInt(this.p.width / (this.baseW / this.lineHeight));
+    
     this.maxLineWidth = this.p.width * 0.85;
 
     this.p.textFont(this.font);
@@ -29,6 +34,8 @@ class KaraokeAnimation extends BaseAnimation {
   }
 
   draw() {
+    super.draw();
+
     let elapsed = this.p.millis() - this.startTime;
 
     if (elapsed >= this.nextWordTime) {
@@ -92,7 +99,7 @@ class KaraokeAnimation extends BaseAnimation {
 
         for (let j = 0; j < lineWords.length; j++) {
           if (wordCount < this.currentWordIndex) {
-            this.p.fill(this.color);
+            this.p.fill(this.textColor);
             this.p.noStroke();
             this.p.text(lineWords[j], lineX, lineY);
           }
