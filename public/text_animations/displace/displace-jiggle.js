@@ -1,18 +1,3 @@
-let shaderProgram;
-let graphics;
-
-// GLSL programs
-let vertexShader = `
-attribute vec3 aPosition;
-attribute vec2 aTexCoord;
-
-varying vec2 vTexCoord;
-
-void main() {
-  vTexCoord = aTexCoord;
-  gl_Position = vec4(aPosition, 1.0);
-}
-`;
 
 let fragmentShaderGood = `
 precision highp float;
@@ -44,38 +29,6 @@ void main() {
 }
 `;
 
-let fragmentShaderGood_random = `
-precision highp float;
-
-uniform sampler2D uTexture;
-uniform float uTime;
-uniform vec2 uResolution;
-
-varying vec2 vTexCoord;
-
-void main() {
-  // Calculate the vector from the current pixel to the center of the image.
-  vec2 toCenter = vec2(0.5) - vTexCoord;
-
-  // Calculate the displacement amount.
-  float displacement = length(toCenter) * 4.9;
-
-  // Add a jiggle motion.
-  vec2 jiggle;
-  jiggle.x = sin(uTime * 10.0 + vTexCoord.y * 3.1415) * 0.06;
-  jiggle.y = cos(uTime * 8.0 + vTexCoord.x * 3.1415) * 0.06;
-  displacement += length(jiggle);
-
-  // Add the displacement to the original texture coordinate.
-  // Squaring the length for a concave magnification effect.
-  vec2 distortedTexCoord = vTexCoord + displacement * toCenter * length(toCenter);
-
-  // Read the original texture with the displaced texture coordinate.
-  vec4 color = texture2D(uTexture, distortedTexCoord);
-
-  gl_FragColor = color;
-}
-`;
 
 let fragmentShaderGood_v2 = `
 precision highp float;
@@ -188,16 +141,75 @@ void main() {
 
   gl_FragColor = color;
 }
-
 `;
 
-let x, y, aspectRatio, mask;
+let shaderProgram;
+let graphics;
+
+// GLSL programs
+let vertexShader = `
+attribute vec3 aPosition;
+attribute vec2 aTexCoord;
+
+varying vec2 vTexCoord;
+
+void main() {
+  vTexCoord = aTexCoord;
+  gl_Position = vec4(aPosition, 1.0);
+}
+`;
+
+let fragmentShaderGood_random = `
+precision highp float;
+
+uniform sampler2D uTexture;
+uniform float uTime;
+uniform vec2 uResolution;
+
+varying vec2 vTexCoord;
+
+void main() {
+  // Calculate the vector from the current pixel to the center of the image.
+  vec2 toCenter = vec2(0.5) - vTexCoord;
+
+  // Calculate the displacement amount.
+  float displacement = length(toCenter) * 4.9;
+
+  // Add a jiggle motion.
+  vec2 jiggle;
+  jiggle.x = sin(uTime * 10.0 + vTexCoord.y * 3.1415) * 0.06;
+  jiggle.y = cos(uTime * 8.0 + vTexCoord.x * 3.1415) * 0.06;
+  displacement += length(jiggle);
+
+  // Add the displacement to the original texture coordinate.
+  // Squaring the length for a concave magnification effect.
+  vec2 distortedTexCoord = vTexCoord + displacement * toCenter * length(toCenter);
+
+  // Read the original texture with the displaced texture coordinate.
+  vec4 color = texture2D(uTexture, distortedTexCoord);
+  
+  // If the alpha value is less than a small threshold, discard the fragment.
+  if (color.a < 0.4) discard;
+  if (color.r < 0.3) discard;
+
+  // Use the alpha channel of the color to control its transparency
+  gl_FragColor = vec4(color.rgb, color.a);
+}
+`;
+
+let x, y, aspectRatio, video;
 
 function setup() {
-  createCanvas(800, 1100, WEBGL);
-  graphics = createGraphics(800, 800);
+  video = createVideo(['/public/videos/36_Competitive_FF4D2F_Particles_Sphere.mp4']);
+  video.volume(0);  
+  video.loop();
+  video.hide();
+
+  createCanvas(1080*0.8, 1920*0.8, WEBGL);
+  graphics = createGraphics(width, width);
   shaderProgram = createShader(vertexShader, fragmentShaderGood_random);
   //shaderProgram = createShader(vertexShader, fragmentShaderGood_v2);
+  
   shader(shaderProgram);
   noStroke();
   x = graphics.width / 2;
@@ -206,42 +218,32 @@ function setup() {
 }
 
 function draw() {
+  
   background(220);
-  graphics.clear();
+  image(video, -width/2, -height/2, width, height);
+  graphics.clear(0, 0, 0, 0);
+  //clearWithTransparency(graphics);
+  //blendMode(OVERLAY);
   graphics.textSize(40);
   graphics.textAlign(CENTER, CENTER);
   graphics.fill(255,0,0);
+  //graphics.clear(0, 0, 0, 0);
   graphics.text('Hello, world!\nlets eat tacos', x, y);
+  
   //y = y + 5;
   if (y > height) {
     y = 0;
   }
 
-  // Apply the mask to the graphics buffer before sending it to the shader
-  //graphics.mask(mask.get());
-
   shaderProgram.setUniform('uTexture', graphics);
   shaderProgram.setUniform('uTime', millis() / 1000.0);
 
-  if (height > width) {
-    // Canvas is in portrait mode
-    beginShape(TRIANGLES);
-    vertex(-1, -aspectRatio, 0, 0, 1);
-    vertex(1, -aspectRatio, 0, 1, 1);
-    vertex(1, aspectRatio, 0, 1, 0);
-    vertex(1, aspectRatio, 0, 1, 0);
-    vertex(-1, aspectRatio, 0, 0, 0);
-    vertex(-1, -aspectRatio, 0, 0, 1);
-    endShape();
-  } else {
-    // Canvas is in landscape mode :: NOT WORKING CORRECTLY
-    beginShape(TRIANGLES);
-    vertex(-aspectRatio, -1, 0, 0, 1);
-    vertex(aspectRatio, -1, 0, 1, 1);
-    vertex(aspectRatio, 1, 0, 1, 0);
-    vertex(aspectRatio, 1, 0, 1, 0);
-    vertex(-aspectRatio, 1, 0, 0, 0);
-    vertex(-aspectRatio, -1, 0, 0, 1);
-    endShape();
-  }
+  beginShape(TRIANGLES);
+  vertex(-1, -aspectRatio, 0, 0, 1);
+  vertex(1, -aspectRatio, 0, 1, 1);
+  vertex(1, aspectRatio, 0, 1, 0);
+  vertex(1, aspectRatio, 0, 1, 0);
+  vertex(-1, aspectRatio, 0, 0, 0);
+  vertex(-1, -aspectRatio, 0, 0, 1);
+  endShape();
 }

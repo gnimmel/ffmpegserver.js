@@ -21,10 +21,12 @@ class BaseSketch {
         this.intPixDensity = 2;
         this.frameCount = 0;
         this.numFrames = this.fps * this.DURATION;
+
         this.textAnimation;
     }
     
     p5preload(p) {
+        this.video = p.createVideo(this.videoPath);
         this.font = p.loadFont("fonts/PPMori-Regular.otf");
     }
 
@@ -36,7 +38,7 @@ class BaseSketch {
         p.createCanvas(this.canvasWidth, this.canvasHeight, (this.REQUIRES_GL) ? p.WEBGL : p.P2D);
         p.background(0);
 
-        this.video = p.createVideo(this.videoPath);
+        
 
         this.video.elt.onloadstart = function() {
             console.log("Video load started.");
@@ -61,6 +63,7 @@ class BaseSketch {
         this.video.elt.setAttribute('loop', true);
         this.video.elt.setAttribute('muted', true);
 
+        p.textFont(this.font);
 
         //this.textAnimation = new SphereAnimation(p, this.font, this.lyrics, this.textColor);
         //this.textAnimation = new KaraokeAnimation(p, this.font, this.lyrics, this.textColor);
@@ -70,16 +73,14 @@ class BaseSketch {
         //setupSphere(p, this.font, this.lyrics, this.textColor);
 
         this.theCanvas = document.getElementById('defaultCanvas0');
-
-        p.textFont(this.font);
     }
 
     p5draw(p) {
         if (!this.bVideoReady) return;
-        p.clear();
+        p.clear(0,0,0,0);
 
         p.image(this.video, this.w_gloffset, this.h_gloffset, p.width, p.height);
-        this.textAnimation.draw();
+        //this.textAnimation.draw();
 
         /*p.fill(0);
         p.textSize(20);
