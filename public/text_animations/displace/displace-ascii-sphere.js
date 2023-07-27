@@ -247,7 +247,7 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(1080*0.65, 1920*0.65, WEBGL);
+  createCanvas(1080, 1920, WEBGL);
   
   graphics = createGraphics(width, width, WEBGL);  // Create a 2D graphics for text
   //graphics.textFont(myFont);  // Set the font
@@ -280,9 +280,9 @@ function draw() {
   //graphics.background(0, 0, 0, 0);  // Ensure the background is transparent
   graphicsText2D.clear();
   graphicsText2D.fill("#5895EA");
-  graphicsText2D.textSize(38);
+  graphicsText2D.textSize(56);
   graphicsText2D.textAlign(CENTER, CENTER);
-  graphicsText2D.text('Hello, world!\nlets eat tacos', x, y);
+  graphicsText2D.text('Hello, world!\nLets eat tacos', x, y);
   
   graphics.clear();
   graphics.image(graphicsText2D, -graphicsText2D.width/2, -graphicsText2D.height/2);
