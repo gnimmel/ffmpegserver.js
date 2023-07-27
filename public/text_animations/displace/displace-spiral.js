@@ -281,15 +281,16 @@ let aspectRatio;
 let isPaused = false;
 let startPauseTime;
 let pauseDuration = 1000;
-let yStep = 35;
+let scale = 0.5;
+let yStep = 35*scale;
 
 function preload() {
-  video = createVideo(['/public/videos/23_Competitive_FFFFFF_Spiral.mp4']);
-  myFont = loadFont('/public/fonts/PPMori-Regular.otf');  // Use a local font file
+  video = createVideo(['/videos/24_Competitive_FFFFFF_Spiral.mp4']);
+  myFont = loadFont('/fonts/PPMori-Regular.otf');  // Use a local font file
 }
 
 function setup() {
-  createCanvas(1080, 1920, WEBGL);
+  createCanvas(1080*scale, 1920*scale, WEBGL);
   
   graphics = createGraphics(width, height, WEBGL);  // Create a 2D graphics for text
   //graphics.textFont(myFont);  // Set the font
@@ -322,8 +323,8 @@ function draw() {
   //graphics.background(0, 0, 0, 0);  // Ensure the background is transparent
   graphicsText2D.clear();
   graphicsText2D.fill(255);
-  graphicsText2D.textSize(88);
-  graphicsText2D.textLeading(86);
+  graphicsText2D.textSize(88*scale);
+  graphicsText2D.textLeading(86*scale);
   graphicsText2D.textAlign(CENTER, CENTER);
   graphicsText2D.text('Hello, world!\nLets eat tacos', x, y);
   

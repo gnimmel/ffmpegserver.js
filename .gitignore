@@ -22,7 +22,7 @@ temp
 
 # OS
 .DS_Store
-*.mp4
+#*.mp4
 
 dist/uhhm-shareable-linux-x64
 dist/uhhm-shareable-macos-arm64

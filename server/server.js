@@ -199,6 +199,40 @@ app.post('/get-sketch', async (req, res) => {
     }
   });
 
+
+  //HARDCODE SOME ASSET DAATA
+  let lyrics = [
+    [
+    "Don't know where she gets it,",
+    "Dem golden vocals be hittin'.",
+    "Leavin' legends in her wake,",
+    "Every note she take, a heartbreak."
+    ],
+    [
+    "Reminiscing on the early days,",
+    "Workin' hard, no time to laze.",
+    "Bittersweet, the memories flow,",
+    "Humble beginnings, watch her glow."
+    ],
+    [
+    "Superstar from the get-go,",
+    "Competition runnin' off slow.",
+    "She's got that magic, can't deny,",
+    "A legend always reachin' sky-high."
+    ],    
+    [
+    "Superstar from the get-go,",
+    "Competition runnin' off slow.",
+    "She's got that magic, can't deny,",
+    "A legend always reachin' sky-high."
+    ]];
+  model.setAssetData("1", "competitive", lyrics);
+  model.setAssetData("2", "competitive", lyrics);
+  model.setAssetData("3", "competitive", lyrics);
+  model.setAssetData("4", "competitive", lyrics);
+  model.setAssetData("5", "competitive", lyrics);
+  model.setAssetData("6", "competitive", lyrics);
+
   startServer();
 
 

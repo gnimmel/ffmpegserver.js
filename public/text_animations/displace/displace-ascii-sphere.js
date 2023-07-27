@@ -240,14 +240,15 @@ let video;
 let shaderProgram;
 let graphics, graphicsText2D;
 let aspectRatio;
+let scale = 0.5;
 
 function preload() {
-  video = createVideo(['/public/videos/27_Competitive_5895EA_ASCII_Sphere.mp4']);
-  myFont = loadFont('/public/fonts/PPMori-Regular.otf');  // Use a local font file
+  video = createVideo(['/videos/27_Competitive_5895EA_ASCII_Sphere.mp4']);
+  myFont = loadFont('/fonts/PPMori-Regular.otf');  // Use a local font file
 }
 
 function setup() {
-  createCanvas(1080, 1920, WEBGL);
+  createCanvas(1080*scale, 1920*scale, WEBGL);
   
   graphics = createGraphics(width, width, WEBGL);  // Create a 2D graphics for text
   //graphics.textFont(myFont);  // Set the font
@@ -280,7 +281,7 @@ function draw() {
   //graphics.background(0, 0, 0, 0);  // Ensure the background is transparent
   graphicsText2D.clear();
   graphicsText2D.fill("#5895EA");
-  graphicsText2D.textSize(56);
+  graphicsText2D.textSize(56*scale);
   graphicsText2D.textAlign(CENTER, CENTER);
   graphicsText2D.text('Hello, world!\nLets eat tacos', x, y);
   
