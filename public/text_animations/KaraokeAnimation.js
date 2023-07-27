@@ -1,4 +1,4 @@
-import BaseAnimation from '/text_animations/BaseAnimation.js';
+import BaseAnimation from './BaseAnimation.js';
 
 class KaraokeAnimation extends BaseAnimation {
   constructor(p, font, arrLyrics, textColor) {
@@ -23,7 +23,7 @@ class KaraokeAnimation extends BaseAnimation {
     super.setup();
     this.fontSize = parseInt(this.p.width / (this.baseW / this.fontSize));
     this.lineHeight = parseInt(this.p.width / (this.baseW / this.lineHeight));
-    
+
     this.maxLineWidth = this.p.width * 0.85;
 
     this.p.textFont(this.font);

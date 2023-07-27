@@ -204,8 +204,8 @@ let aspectRatio;
 let scale = 0.5;
 
 function preload() {
-  video = createVideo(['/videos/36_Competitive_FF4D2F_Particles_Sphere.mp4']);
-  myFont = loadFont('/fonts/PPMori-Regular.otf');  // Use a local font file
+  video = createVideo(['../../videos/36_Competitive_FF4D2F_Particles_Sphere.mp4']);
+  myFont = loadFont('../../fonts/PPMori-Regular.otf');  // Use a local font file
 }
 
 function setup() {

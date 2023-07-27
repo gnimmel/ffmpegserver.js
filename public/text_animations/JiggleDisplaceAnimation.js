@@ -1,4 +1,4 @@
-import BaseAnimation from '/text_animations/BaseAnimation.js';
+import BaseAnimation from './BaseAnimation.js';
 
 class JiggleDisplaceAnimation extends BaseAnimation {
   

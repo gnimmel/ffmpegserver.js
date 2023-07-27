@@ -285,8 +285,8 @@ let scale = 0.5;
 let yStep = 35*scale;
 
 function preload() {
-  video = createVideo(['/videos/24_Competitive_FFFFFF_Spiral.mp4']);
-  myFont = loadFont('/fonts/PPMori-Regular.otf');  // Use a local font file
+  video = createVideo(['../../videos/24_Competitive_FFFFFF_Spiral.mp4']);
+  myFont = loadFont('../../fonts/PPMori-Regular.otf');  // Use a local font file
 }
 
 function setup() {

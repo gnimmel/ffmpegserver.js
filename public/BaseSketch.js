@@ -1,8 +1,8 @@
 //import { setupSphere, drawSphere } from '/text_animations/sphere/sphere.js';
-import SphereAnimation from '/text_animations/SphereAnimation.js';
-import KaraokeAnimation from '/text_animations/KaraokeAnimation.js';
-import SlideAnimation from '/text_animations/SlideAnimation.js';
-import JiggleDisplaceAnimation from '/text_animations/JiggleDisplaceAnimation.js';
+import SphereAnimation from './text_animations/SphereAnimation.js';
+import KaraokeAnimation from './text_animations/KaraokeAnimation.js';
+import SlideAnimation from './text_animations/SlideAnimation.js';
+import JiggleDisplaceAnimation from './text_animations/JiggleDisplaceAnimation.js';
 
 class BaseSketch {
     constructor(fps, canvasWidth, canvasHeight, lyrics, textColor, videoPath, DURATION = 15, REQUIRES_GL = true) {

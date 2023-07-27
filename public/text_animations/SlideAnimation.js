@@ -1,4 +1,4 @@
-import BaseAnimation from '/text_animations/BaseAnimation.js';
+import BaseAnimation from './BaseAnimation.js';
 
 class SlideAnimation extends BaseAnimation {
   constructor(p, font, arrLyrics, textColor) {
@@ -31,7 +31,7 @@ class SlideAnimation extends BaseAnimation {
     this.leading = parseInt(this.p.width / (this.baseW / this.leading));
     this.textBoxWidth = this.p.width * 0.7;
     this.textY = this.leading;
-    
+
     this.p.textSize(this.fontSize);
     this.p.textLeading(this.leading);
     this.lines = this.splitIntoLines(this.sentences[this.currentSentence], this.textBoxWidth);

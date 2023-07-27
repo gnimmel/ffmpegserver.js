@@ -226,7 +226,7 @@ void main() {
   vec4 color = texture2D(uTexture, vec2(distortedTexCoord.x, 1.0 - distortedTexCoord.y));
 
   // If the alpha value is less than a small threshold, discard the fragment.
-  if (color.a < 0.4) discard;
+  if (color.a < 0.7) discard;
 
   gl_FragColor = color;
 }
@@ -243,8 +243,8 @@ let aspectRatio;
 let scale = 0.5;
 
 function preload() {
-  video = createVideo(['/videos/27_Competitive_5895EA_ASCII_Sphere.mp4']);
-  myFont = loadFont('/fonts/PPMori-Regular.otf');  // Use a local font file
+  video = createVideo(['../../videos/27_Competitive_5895EA_ASCII_Sphere.mp4']);
+  myFont = loadFont('../../fonts/PPMori-Regular.otf');  // Use a local font file
 }
 
 function setup() {
