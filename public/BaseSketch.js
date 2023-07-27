@@ -68,10 +68,24 @@ class BaseSketch {
 
         this.videoGraphics = p.createGraphics(p.width, p.height);//, p.WEBGL);
 
-        //this.textAnimation = new SphereAnimation(p, this.font, this.lyrics, this.textColor);
-        //this.textAnimation = new KaraokeAnimation(p, this.font, this.lyrics, this.textColor);
-        //this.textAnimation = new SlideAnimation(p, this.font, this.lyrics, this.textColor);
-        this.textAnimation = new JiggleDisplaceAnimation(p, this.font, this.lyrics, this.textColor);
+        if (this.videoPath.toLowerCase().includes("Floating_Particles".toLowerCase())) {
+            this.textAnimation = new SphereAnimation(p, this.font, this.lyrics, this.textColor);
+        } else if (this.videoPath.toLowerCase().includes("Geometry_Wave".toLowerCase())) {
+            this.textAnimation = new KaraokeAnimation(p, this.font, this.lyrics, this.textColor);
+        } else if (this.videoPath.toLowerCase().includes("Spiral".toLowerCase())) {
+            this.textAnimation = new SlideAnimation(p, this.font, this.lyrics, this.textColor);
+        } else if (this.videoPath.toLowerCase().includes("ASCII_Sphere".toLowerCase())) {
+            this.textAnimation = new JiggleDisplaceAnimation(p, this.font, this.lyrics, this.textColor);
+        } else if (this.videoPath.toLowerCase().includes("ASCII".toLowerCase())) {
+            console.log("ANIMATION NEEDS TO BE UPDATED");
+            this.textAnimation = new KaraokeAnimation(p, this.font, this.lyrics, this.textColor);
+        } else if (this.videoPath.toLowerCase().includes("Sphere".toLowerCase())) {
+            console.log("ANIMATION NEEDS TO BE UPDATED");
+            this.textAnimation = new JiggleDisplaceAnimation(p, this.font, this.lyrics, this.textColor);
+        } else {
+            console.error("INVALID ANIMATION");
+        }
+
         this.textAnimation.setup();
         //setupSphere(p, this.font, this.lyrics, this.textColor);
 
