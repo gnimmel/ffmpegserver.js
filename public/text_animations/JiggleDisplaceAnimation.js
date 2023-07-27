@@ -63,8 +63,8 @@ class JiggleDisplaceAnimation extends BaseAnimation {
     this.timePerSentence = 1000;
     this.nextWordTime = 0;
     this.maxLineWidth;
-    this.fontSize = 48;
-    this.lineHeight = 50;
+    this.fontSize = 50;
+    this.lineHeight = 52;
     //this.textColor = textColor;
     //this.font = font;
     this.startTime = null;
@@ -171,7 +171,7 @@ class JiggleDisplaceAnimation extends BaseAnimation {
 
         for (let j = 0; j < lineWords.length; j++) {
           if (wordCount < this.currentWordIndex) {
-            if (false) 
+            if (true) 
             {
               this.p.fill(this.textColor);
               this.p.noStroke();

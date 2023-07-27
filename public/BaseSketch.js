@@ -27,31 +27,40 @@ class BaseSketch {
     }
     
     p5preload(p) {
-        this.video = p.createVideo(this.videoPath);
         this.font = p.loadFont("fonts/PPMori-Regular.otf");
     }
 
     p5setup(p) {
         console.log("fps: " + this.fps);
         console.log("sketch::SETUP");
+        
+        this.video = p.createVideo(this.videoPath);
+
         p.frameRate(this.fps);
         p.pixelDensity(this.intPixDensity);
         p.createCanvas(this.canvasWidth, this.canvasHeight, (this.REQUIRES_GL) ? p.WEBGL : p.P2D);
         p.background(0);
 
-        
+        this.video.elt.oncanplay = () => {
+            if (!this.bVideoReady) {
+                this.bVideoReady = true;
+                this.video.play();
+                console.log("Video can play.");
+            }
+        }
 
         this.video.elt.onloadstart = function() {
             console.log("Video load started.");
         }
 
+        /*
         this.video.elt.oncanplaythrough = () => {
             if (!this.bVideoReady) {
                 this.bVideoReady = true;
                 this.video.play();
                 console.log("Video can play through.");
             }
-        }
+        }*/
 
         this.video.elt.onerror = function() {
             console.log("An error occurred while loading the video.");

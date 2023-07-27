@@ -60,6 +60,9 @@ window.onload = async function()
           } else if (id == 3){
             vidPath = "videos/24_Competitive_FFFFFF_Spiral.mp4";
             textColor = "#FFFFFF";
+          } else if (id == 4){
+            vidPath = "videos/28_Competitive_FFC700_ASCII_Sphere.mp4";
+            textColor = "#FFC700";
           }
           
           // Create the sketch
