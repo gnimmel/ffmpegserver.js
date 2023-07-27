@@ -243,7 +243,7 @@ let aspectRatio;
 let scale = 0.5;
 
 function preload() {
-  video = createVideo(['../../videos/27_Competitive_5895EA_ASCII_Sphere.mp4']);
+  video = createVideo(['../../videos/28_Competitive_FFC700_ASCII_Sphere.mp4']);
   myFont = loadFont('../../fonts/PPMori-Regular.otf');  // Use a local font file
 }
 
@@ -280,7 +280,7 @@ function draw() {
 
   //graphics.background(0, 0, 0, 0);  // Ensure the background is transparent
   graphicsText2D.clear();
-  graphicsText2D.fill("#5895EA");
+  graphicsText2D.fill("#FFC700");
   graphicsText2D.textSize(56*scale);
   graphicsText2D.textAlign(CENTER, CENTER);
   graphicsText2D.text('Hello, world!\nLets eat tacos', x, y);
